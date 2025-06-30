@@ -1,12 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Users, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Users,
+  HeartOff,
+  HeartPlus,
+  Minus,
+  Plus,
+  FileSpreadsheet,
+} from "lucide-react";
+import { saveAs } from "file-saver";
+import { utils, write } from "xlsx";
 
-import { useApp } from "@/contexts/app-context";
 import { ComparisonResult } from "@/types";
-import LoadingSpinner from "@/components/loading-spinner";
 import UserCard from "@/components/use-card";
+import { useApp } from "@/contexts/app-context";
+import SearchFilter from "@/components/search-filter";
+import { useUserFilter } from "@/hooks/use-user-filter";
+import LoadingSpinner from "@/components/loading-spinner";
 
 export default function ComparePage() {
   const { isLoading, setIsLoading } = useApp();
@@ -18,6 +29,8 @@ export default function ComparePage() {
     followers: "",
     following: "",
   });
+  const notFollowedBackFilter = useUserFilter(result?.notFollowedBack || []);
+  const notFollowingBackFilter = useUserFilter(result?.notFollowingBack || []);
 
   const handleCompare = async () => {
     if (!userId) {
@@ -35,13 +48,11 @@ export default function ComparePage() {
           headers: { "Content-Type": "application/json" },
         }
       );
+      const data = await checkRes.json();
 
-      setCheckData(await checkRes.json());
+      setCheckData(data);
 
-      if (
-        checkData?.followers === "exists" ||
-        checkData?.following === "exists"
-      ) {
+      if (data.followers === "exists" || data.following === "exists") {
         const response = await fetch(
           `http://localhost:3333/relationship?id=${userId}`,
           {
@@ -61,6 +72,21 @@ export default function ComparePage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDownloadExcel = (
+    type: "notFollowedBack" | "notFollowingBack"
+  ) => {
+    const data = result![type];
+
+    const worksheet = utils.json_to_sheet(data);
+    const workbook = utils.book_new();
+    utils.book_append_sheet(workbook, worksheet, type);
+
+    const excelBuffer = write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+
+    saveAs(blob, `${type}.xlsx`);
   };
 
   if (
@@ -137,28 +163,43 @@ export default function ComparePage() {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
-                <ArrowRight className="w-5 h-5 text-red-500" />
-                <h2 className="text-lg font-semibold text-gray-900">
+                <HeartOff className="w-5 h-5 text-[#E1306C]" />
+                <h2 className="text-lg font-semibold text-[#E1306C]">
                   You follow but they don't follow back (
                   {result.notFollowedBack.length})
                 </h2>
               </div>
-              <button
-                onClick={() => setShowNotFollowedBack(!showNotFollowedBack)}
-                className="text-gray-500 hover:text-gray-700 flex items-center space-x-1"
-              >
-                {showNotFollowedBack ? (
-                  <>
-                    <ChevronUp className="w-4 h-4" />
-                    <span>Minimize</span>
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-4 h-4" />
-                    <span>Expand</span>
-                  </>
-                )}
-              </button>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleDownloadExcel("notFollowedBack")}
+                  className="bg-[#FCAF45] hover:bg-[#FCAF45] p-2 rounded-lg flex items-center justify-center "
+                >
+                  <FileSpreadsheet className="w-4 h-4 text-white" />
+                  <span className="text-xs text-white ml-1">Excel</span>
+                </button>
+                <button
+                  onClick={() => setShowNotFollowedBack(!showNotFollowedBack)}
+                  className={`
+    w-22 h-8 flex items-center justify-center 
+    rounded-md transition-colors
+    ${showNotFollowedBack ? "bg-[#833AB4]" : "bg-[#833AB4]"} 
+    hover:brightness-110
+  `}
+                >
+                  {showNotFollowedBack ? (
+                    <>
+                      <Minus className="w-4 h-4 text-white" />
+                      <span className="text-xs text-white ml-1">Minimize</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4 text-white" />
+                      <span className="text-xs text-white ml-1">Expand</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {result.notFollowedBack.length === 0 ? (
@@ -166,14 +207,23 @@ export default function ComparePage() {
                 🎉 Everyone you follow follows you back!
               </p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(showNotFollowedBack
-                  ? result.notFollowedBack
-                  : result.notFollowedBack.slice(0, 20)
-                ).map((user, index) => (
-                  <UserCard key={index} user={user} />
-                ))}
-              </div>
+              <>
+                <SearchFilter
+                  onSearch={notFollowedBackFilter.handleSearch}
+                  placeholder="Search users..."
+                  className="w-full mb-4"
+                  filtered={notFollowedBackFilter.filteredCount}
+                  total={notFollowedBackFilter.totalUsers}
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {(showNotFollowedBack
+                    ? notFollowedBackFilter.filteredUsers
+                    : notFollowedBackFilter.filteredUsers.slice(0, 9)
+                  ).map((user, index) => (
+                    <UserCard key={index} user={user} />
+                  ))}
+                </div>
+              </>
             )}
           </div>
 
@@ -181,28 +231,43 @@ export default function ComparePage() {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
-                <ArrowRight className="w-5 h-5 text-blue-500 rotate-180" />
-                <h2 className="text-lg font-semibold text-gray-900">
+                <HeartPlus className="w-5 h-5 text-[#E1306C] rotate-180" />
+                <h2 className="text-lg font-semibold text-[#E1306C]">
                   They follow you but you don't follow back (
                   {result.notFollowingBack.length})
                 </h2>
               </div>
-              <button
-                onClick={() => setShowNotFollowingBack(!showNotFollowingBack)}
-                className="text-gray-500 hover:text-gray-700 flex items-center space-x-1"
-              >
-                {showNotFollowingBack ? (
-                  <>
-                    <ChevronUp className="w-4 h-4" />
-                    <span>Minimize</span>
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-4 h-4" />
-                    <span>Expand</span>
-                  </>
-                )}
-              </button>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleDownloadExcel("notFollowingBack")}
+                  className="bg-[#FCAF45] hover:bg-[#FCAF45] p-2 rounded-lg flex items-center justify-center "
+                >
+                  <FileSpreadsheet className="w-4 h-4 text-white" />
+                  <span className="text-xs text-white ml-1">Excel</span>
+                </button>
+                <button
+                  onClick={() => setShowNotFollowingBack(!showNotFollowingBack)}
+                  className={`
+    w-22 h-8 flex items-center justify-center 
+    rounded-md transition-colors
+    ${showNotFollowedBack ? "bg-[#833AB4]" : "bg-[#833AB4]"} 
+    hover:brightness-110
+  `}
+                >
+                  {showNotFollowingBack ? (
+                    <>
+                      <Minus className="w-4 h-4 text-white" />
+                      <span className="text-xs text-white ml-1">Minimize</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4 text-white" />
+                      <span className="text-xs text-white ml-1">Expand</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {result.notFollowingBack.length === 0 ? (
@@ -210,14 +275,23 @@ export default function ComparePage() {
                 You follow everyone who follows you!
               </p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(showNotFollowingBack
-                  ? result.notFollowingBack
-                  : result.notFollowingBack.slice(0, 20)
-                ).map((user, index) => (
-                  <UserCard key={index} user={user} />
-                ))}
-              </div>
+              <>
+                <SearchFilter
+                  onSearch={notFollowingBackFilter.handleSearch}
+                  placeholder="Search users..."
+                  className="w-full mb-4"
+                  filtered={notFollowingBackFilter.filteredCount}
+                  total={notFollowingBackFilter.totalUsers}
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {(showNotFollowingBack
+                    ? notFollowingBackFilter.filteredUsers
+                    : notFollowingBackFilter.filteredUsers.slice(0, 9)
+                  ).map((user, index) => (
+                    <UserCard key={index} user={user} />
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>

@@ -1,12 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle, AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
+import {
+  CheckCircle,
+  AlertCircle,
+  Share2,
+  Waypoints,
+  Minus,
+  Plus,
+  FileSpreadsheet,
+} from "lucide-react";
+import { saveAs } from "file-saver";
+import { utils, write } from "xlsx";
 
-import { useApp } from "@/contexts/app-context";
 import { VerificationResult } from "@/types";
-import LoadingSpinner from "@/components/loading-spinner";
 import UserCard from "@/components/use-card";
+import { useApp } from "@/contexts/app-context";
+import SearchFilter from "@/components/search-filter";
+import { useUserFilter } from "@/hooks/use-user-filter";
+import LoadingSpinner from "@/components/loading-spinner";
 
 export default function VerifyPage() {
   const { collectionData, setCollectionData, isLoading, setIsLoading } =
@@ -15,12 +27,14 @@ export default function VerifyPage() {
   const [expectedFollowers, setExpectedFollowers] = useState("");
   const [expectedFollowing, setExpectedFollowing] = useState("");
   const [result, setResult] = useState<VerificationResult | null>(null);
-  const [showFollowers, setShowFollowers] = useState(true);
-  const [showFollowing, setShowFollowing] = useState(true);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
   const [checkData, setCheckData] = useState({
     followers: "",
     following: "",
   });
+  const followersFilter = useUserFilter(collectionData.followers);
+  const followingFilter = useUserFilter(collectionData.following);
 
   const calcDiff = (expected: number, found: number) =>
     Math.max(expected - found, 0);
@@ -37,13 +51,11 @@ export default function VerifyPage() {
           headers: { "Content-Type": "application/json" },
         }
       );
+      const data = await checkRes.json();
 
-      setCheckData(await checkRes.json());
+      setCheckData(data);
 
-      if (
-        checkData?.followers === "exists" ||
-        checkData?.following === "exists"
-      ) {
+      if (data.followers === "exists" || data.following === "exists") {
         const response = await fetch(
           `http://localhost:3333/follow/data?userId=${userId}&followers=${expectedFollowers}&following=${expectedFollowing}`,
           {
@@ -83,6 +95,19 @@ export default function VerifyPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDownloadExcel = (type: "followers" | "following") => {
+    const data = collectionData[type];
+
+    const worksheet = utils.json_to_sheet(data);
+    const workbook = utils.book_new();
+    utils.book_append_sheet(workbook, worksheet, type);
+
+    const excelBuffer = write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+
+    saveAs(blob, `${type}.xlsx`);
   };
 
   if (
@@ -246,72 +271,130 @@ export default function VerifyPage() {
         )}
       </div>
 
-      {(collectionData.followers.length > 0 ||
-        collectionData.following.length > 0) && (
+      {collectionData && (
         <div className="space-y-6">
           {collectionData.followers.length > 0 && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mt-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Followers ({collectionData.followers.length})
-                </h2>
-                <button
-                  onClick={() => setShowFollowers(!showFollowers)}
-                  className="text-gray-500 hover:text-gray-700 flex items-center space-x-1"
-                >
-                  {showFollowers ? (
-                    <>
-                      <ChevronUp className="w-4 h-4" />
-                      <span>Minimize</span>
-                    </>
-                  ) : (
-                    <>
-                      <ChevronDown className="w-4 h-4" />
-                      <span>Expand</span>
-                    </>
-                  )}
-                </button>
-              </div>
-              {showFollowers && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {collectionData.followers.map((user) => (
-                    <UserCard key={user.id} user={user} />
-                  ))}
+                <div className="flex items-center space-x-2">
+                  <Share2 className="w-5 h-5 text-[#E1306C]" />
+                  <h2 className="text-lg font-semibold text-[#E1306C]">
+                    Followers ({collectionData.followers.length})
+                  </h2>
                 </div>
-              )}
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleDownloadExcel("followers")}
+                    className="bg-[#FCAF45] hover:bg-[#FCAF45] p-2 rounded-lg flex items-center justify-center "
+                  >
+                    <FileSpreadsheet className="w-4 h-4 text-white" />
+                    <span className="text-xs text-white ml-1">Excel</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowFollowers(!showFollowers)}
+                    className={`
+    w-22 h-8 flex items-center justify-center 
+    rounded-md transition-colors
+    ${showFollowers ? "bg-[#833AB4]" : "bg-[#6e2b97]"} 
+    hover:brightness-110
+  `}
+                  >
+                    {showFollowers ? (
+                      <>
+                        <Minus className="w-4 h-4 text-white" />
+                        <span className="text-xs text-white ml-1">
+                          Minimize
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4 text-white" />
+                        <span className="text-xs text-white ml-1">Expand</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <SearchFilter
+                onSearch={followersFilter.handleSearch}
+                placeholder="Search followers..."
+                className="w-full mb-4"
+                filtered={followersFilter.filteredUsers.length}
+                total={collectionData.followers.length}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {(showFollowers
+                  ? followersFilter.filteredUsers
+                  : followersFilter.filteredUsers.slice(0, 9)
+                ).map((user) => (
+                  <UserCard key={user.id} user={user} />
+                ))}
+              </div>
             </div>
           )}
 
           {collectionData.following.length > 0 && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                  Following ({collectionData.following.length})
-                </h2>
-                <button
-                  onClick={() => setShowFollowing(!showFollowing)}
-                  className="text-gray-500 hover:text-gray-700 flex items-center space-x-1"
-                >
-                  {showFollowing ? (
-                    <>
-                      <ChevronUp className="w-4 h-4" />
-                      <span>Minimize</span>
-                    </>
-                  ) : (
-                    <>
-                      <ChevronDown className="w-4 h-4" />
-                      <span>Expand</span>
-                    </>
-                  )}
-                </button>
-              </div>
-              {showFollowing && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {collectionData.following.map((user) => (
-                    <UserCard key={user.id} user={user} />
-                  ))}
+                <div className="flex items-center space-x-2">
+                  <Waypoints className="w-5 h-5 text-[#E1306C]" />
+                  <h2 className="text-lg font-semibold text-[#E1306C]">
+                    Following ({collectionData.following.length})
+                  </h2>
                 </div>
-              )}
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleDownloadExcel("following")}
+                    className="bg-[#FCAF45] hover:bg-[#FCAF45] p-2 rounded-lg flex items-center justify-center "
+                  >
+                    <FileSpreadsheet className="w-4 h-4 text-white" />
+                    <span className="text-xs text-white ml-1">Excel</span>
+                  </button>
+                  <button
+                    onClick={() => setShowFollowing(!showFollowing)}
+                    className={`
+    w-22 h-8 flex items-center justify-center 
+    rounded-md transition-colors
+    ${showFollowing ? "bg-[#833AB4]" : "bg-[#833AB4]"} 
+    hover:brightness-110
+  `}
+                  >
+                    {showFollowing ? (
+                      <>
+                        <Minus className="w-4 h-4 text-white" />
+                        <span className="text-xs text-white ml-1">
+                          Minimize
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4 text-white" />
+                        <span className="text-xs text-white ml-1">Expand</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <SearchFilter
+                onSearch={followingFilter.handleSearch}
+                placeholder="Search following..."
+                className="w-full mb-4"
+                filtered={followingFilter.filteredUsers.length}
+                total={collectionData.following.length}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {(showFollowing
+                  ? followingFilter.filteredUsers
+                  : followingFilter.filteredUsers.slice(0, 9)
+                ).map((user) => (
+                  <UserCard key={user.id} user={user} />
+                ))}
+              </div>
             </div>
           )}
         </div>
