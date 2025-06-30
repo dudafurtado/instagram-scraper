@@ -1,0 +1,34 @@
+import "./globals.css";
+
+import type React from "react";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+
+import { AppProvider } from "@/contexts/app-context";
+import Navigation from "@/components/navigation";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Instagram Tool",
+  description: "Instagram data collection and analysis tool",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={`${inter.className}`}>
+        <AppProvider>
+          <Navigation />
+          <main className="min-h-screen bg-gradient-to-tr from-[#feda75] via-[#d62976] to-[#4f5bd5]">
+            {children}
+          </main>
+        </AppProvider>
+      </body>
+    </html>
+  );
+}
