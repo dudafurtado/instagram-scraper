@@ -11,7 +11,7 @@ Interface web para **coletar**, **verificar** e **comparar** seguidores e seguin
 3️⃣ **Verificação dos dados salvos**  
 4️⃣ **Comparação de quem não segue de volta**
 
----
+---- Login com puppeter ou playwright
 
 ## 📃 Páginas principais
 
@@ -23,7 +23,7 @@ Interface web para **coletar**, **verificar** e **comparar** seguidores e seguin
 - ⏳ **Botão:** Inicia a coleta. Mostra progresso simulado.
 
 ![Collect 1](./src/assets/collect-page-1.png)
-![Collect 2](./src/assets/collect-page-1.png)
+![Collect 2](./src/assets/collect-page-2.png)
 
 ---
 
@@ -34,8 +34,9 @@ Interface web para **coletar**, **verificar** e **comparar** seguidores e seguin
 - 🔢 **Extras:** Confirme o número de seguidores/seguindo esperados.
 - ✅ **Resultado:** Mostra quantos registros foram coletados e possíveis diferenças.
 
-![Verify](./src/assets/verify-page-1.png)
-![Verify](./src/assets/verify-page-2.png)
+![Verify 1](./src/assets/verify-page-1.png)
+![Verify 2](./src/assets/verify-page-2.png)
+![Verify 3](./src/assets/verify-page-3.png)
 
 ---
 
@@ -49,6 +50,7 @@ Interface web para **coletar**, **verificar** e **comparar** seguidores e seguin
 
 ![Compare 1](./src/assets/compare-page-1.png)
 ![Compare 2](./src/assets/compare-page-2.png)
+![Compare 3](./src/assets/compare-page-3.png)
 
 ---
 
