@@ -1,3 +1,9 @@
+export interface InstagramCredentials {
+  username: string
+  password: string
+  search: string
+}
+
 export interface InstagramUser {
   pk: string
   pk_id: string
@@ -21,4 +27,38 @@ export interface SimplifiedInstagramUser {
   full_name: string
   profile_pic_url: string
   username: string
+}
+
+export interface ScraperUser {
+  user_id: string
+
+  username: string
+  full_name: string
+  biography: string[]
+  urls: string[]
+  profile_pic_url: string | null
+
+  posts: string
+  follower_count: number
+  following_count: number
+
+  is_private: boolean
+  is_bestie: boolean
+
+  address_street: string
+  city_name: string
+  contact_phone_number: string
+  public_email: string
+  public_phone_number: string
+}
+
+export interface Session {
+  username: string
+  password: string
+  session_id: string
+  csrf_token: string
+  ds_user_id: string
+  ig_app_id: string
+  created_at: string
+  expired_at: string | null
 }
