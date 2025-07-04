@@ -17,7 +17,9 @@ export default function Navigation() {
   };
 
   const navItems = [
-    { href: "/", icon: Search, label: "Collect" },
+    { href: "/", icon: Search, label: "Home" },
+    { href: "/auth", icon: Search, label: "Auth" },
+    { href: "/collect", icon: Search, label: "Collect" },
     { href: "/verify", icon: CheckCircle, label: "Verify" },
     { href: "/compare", icon: Users, label: "Compare" },
   ];

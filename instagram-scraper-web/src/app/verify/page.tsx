@@ -132,7 +132,7 @@ export default function VerifyPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center space-x-3 mb-6">
           <CheckCircle className="w-6 h-6 text-[#E1306C]" />
@@ -144,46 +144,16 @@ export default function VerifyPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Instagram User ID
+              Instagram Username
             </label>
             <input
               type="text"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
-              placeholder="Enter Instagram user ID..."
+              placeholder="username_to_verify"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E1306C] focus:border-transparent"
               required
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Expected Followers
-              </label>
-              <input
-                type="number"
-                value={expectedFollowers}
-                onChange={(e) => setExpectedFollowers(e.target.value)}
-                placeholder="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E1306C] focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Expected Following
-              </label>
-              <input
-                type="number"
-                value={expectedFollowing}
-                onChange={(e) => setExpectedFollowing(e.target.value)}
-                placeholder="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E1306C] focus:border-transparent"
-                required
-              />
-            </div>
           </div>
 
           <button

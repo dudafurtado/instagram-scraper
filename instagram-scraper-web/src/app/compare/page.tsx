@@ -111,7 +111,7 @@ export default function ComparePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
         <div className="flex items-center space-x-3 mb-6">
           <Users className="w-6 h-6 text-[#E1306C]" />
@@ -122,13 +122,13 @@ export default function ComparePage() {
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Instagram User ID
+            Instagram Username
           </label>
           <input
             type="text"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
-            placeholder="Enter Instagram user ID..."
+            placeholder="username_to_compare"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E1306C] focus:border-transparent"
             required
           />
