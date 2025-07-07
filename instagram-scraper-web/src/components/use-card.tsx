@@ -9,7 +9,7 @@ export default function UserCard({ user }: UserCardProps) {
   const src = `http://localhost:3333/img/${user.id}_${user.username}.jpg`;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white/20 rounded-2xl p-4 hover:shadow-md transition-shadow">
       <div className="flex items-center space-x-3">
         <div className="relative">
           <img
@@ -24,12 +24,10 @@ export default function UserCard({ user }: UserCardProps) {
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-gray-900 truncate">
-            {user.username}
-          </p>
-          <p className="text-sm text-gray-500 truncate">{user.full_name}</p>
+          <p className="font-semibold text-white truncate">{user.username}</p>
+          <p className="text-sm text-white truncate">{user.full_name}</p>
           {user.is_private && (
-            <p className="text-xs text-gray-400">Private account</p>
+            <p className="text-xs text-white">Private account</p>
           )}
         </div>
       </div>

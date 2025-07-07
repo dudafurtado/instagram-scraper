@@ -31,13 +31,13 @@ export interface VerificationResult {
 }
 
 export interface InstagramProfile {
-  id: string;
+  user_id: string;
   username: string;
   full_name: string;
   profile_pic_url: string;
   follower_count: number;
   following_count: number;
-  posts_count: number;
+  posts: number;
   is_private: boolean;
   is_verified: boolean;
   created_at?: string;

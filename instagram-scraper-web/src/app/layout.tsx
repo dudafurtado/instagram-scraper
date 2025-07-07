@@ -1,5 +1,6 @@
 import "./globals.css";
 
+import { Toaster } from "sonner";
 import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -22,9 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
+        <Toaster />
         <AppProvider>
-          <Navigation />
-          <main className="min-h-screen bg-gradient-to-tr from-[#feda75] via-[#d62976] to-[#4f5bd5]">
+          <main className="min-h-screen px-4 pt-3 bg-gradient-to-tr from-[#feda75] via-[#d62976] to-[#4f5bd5]">
+            <Navigation />
             {children}
           </main>
         </AppProvider>

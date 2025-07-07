@@ -10,27 +10,24 @@ interface Tab {
 
 interface TabsProps {
   tabs: Tab[];
-  defaultTab?: string;
+  activeTab: string;
   onTabChange?: (tabId: string) => void;
   children: (activeTab: string) => React.ReactNode;
 }
 
 export default function Tabs({
   tabs,
-  defaultTab,
+  activeTab,
   onTabChange,
   children,
 }: TabsProps) {
-  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
-
   const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId);
     onTabChange?.(tabId);
   };
 
   return (
     <div>
-      <div className="flex space-x-1 bg-white/20 backdrop-blur-sm rounded-2xl p-2 mb-8">
+      <div className="flex gap-8 bg-white/20 backdrop-blur-sm rounded-2xl p-2 mb-8">
         {tabs.map((tab) => (
           <button
             key={tab.id}

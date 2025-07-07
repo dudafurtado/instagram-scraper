@@ -10,8 +10,8 @@ interface AppContextType {
   setCollectionData: (data: CollectionData) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
-  currentUserId: string;
-  setCurrentUserId: (id: string) => void;
+  currentUser: any;
+  setCurrentUser: (id: any) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -23,7 +23,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     following: [],
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState("");
+  const [currentUser, setCurrentUser] = useState("");
 
   return (
     <AppContext.Provider
@@ -34,8 +34,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setCollectionData,
         isLoading,
         setIsLoading,
-        currentUserId,
-        setCurrentUserId,
+        currentUser,
+        setCurrentUser,
       }}
     >
       {children}
