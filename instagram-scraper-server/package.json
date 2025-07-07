@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "postinstall": "playwright install"
+    "postinstall": "playwright install",
+    "worker:instagram": "tsx ./app/jobs/instagram_worker.ts"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
@@ -49,6 +50,7 @@
     "pino-pretty": "^13.0.0",
     "prettier": "^3.5.3",
     "ts-node-maintained": "^10.9.5",
+    "tsx": "^4.20.3",
     "typescript": "~5.8"
   },
   "dependencies": {

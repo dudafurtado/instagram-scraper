@@ -1,8 +1,8 @@
 import router from '@adonisjs/core/services/router'
 
 const AuthController = () => import('#controllers/auth_controller')
-const InstagramController = () => import('#controllers/instagram_controller')
-const RelationshipsController = () => import('#controllers/relationships_controller')
+const AccountsController = () => import('#controllers/accounts_controller')
+const FriendshipsController = () => import('#controllers/friendships_controller')
 
 router.get('/', async () => {
   return {
@@ -12,8 +12,8 @@ router.get('/', async () => {
 
 router.post('/instagram/login', [AuthController, 'store'])
 
-router.post('/instagram/follow', [InstagramController, 'follow'])
-router.get('/instagram/follow/files', [InstagramController, 'checkFiles'])
-router.get('/instagram/follow/data', [InstagramController, 'checkData'])
+router.get('/instagram/accounts', [AccountsController, 'index'])
 
-router.get('/instagram/relationship', [RelationshipsController, 'compare'])
+router.get('/instagram/collect', [FriendshipsController, 'collect'])
+router.get('/instagram/friendships', [FriendshipsController, 'index'])
+router.get('/instagram/compare', [FriendshipsController, 'compare'])
