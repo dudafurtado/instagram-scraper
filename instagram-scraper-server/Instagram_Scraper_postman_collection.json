@@ -1,0 +1,345 @@
+{
+	"info": {
+		"_postman_id": "fd85afce-7d49-4855-8b61-d8468a558f11",
+		"name": "Instagram Scraper",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46273406",
+		"_collection_link": "https://mariaeduarda-2691946.postman.co/workspace/Maria-Eduarda's-Workspace~05ae86b3-cd60-4cfb-8276-c6952dce6827/collection/46273406-fd85afce-7d49-4855-8b61-d8468a558f11?action=share&source=collection_link&creator=46273406"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"rasp_insta_code\",\n    \"password\": \"rasp_insta_code321876\",\n    \"search\": [\"_dudafurtado_\", \"ffernanda.cs\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3333/instagram/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"instagram",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Accounts",
+			"item": [
+				{
+					"name": "Listar",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"rasp_insta_code\",\n    \"password\": \"rasp_insta_code321876\",\n    \"search\": \"_dudafurtado_\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3333/instagram/accounts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"instagram",
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Relationship",
+			"item": [
+				{
+					"name": "Collect",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/instagram/collect?userId=261571593",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"instagram",
+								"collect"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "261571593"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/instagram/friendships?userId=261571593",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"instagram",
+								"friendships"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "261571593"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Compare",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/instagram/compare?userId=261571593",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"instagram",
+								"compare"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "261571593"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Instagram",
+			"item": [
+				{
+					"name": "Relationship",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+								"type": "text"
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "YrCDzw2uZIkyseANkAB_SV",
+								"type": "text"
+							},
+							{
+								"key": "X-IG-App-ID",
+								"value": "936619743392459",
+								"type": "text"
+							},
+							{
+								"key": "X-Requested-With",
+								"value": "XMLHttpRequest",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "sessionid=75708152116%3AkD3pzVCODMkFYg%3A29%3AAYcfPgWmGOzCW_LBaRW6krhcjOOjf36oh92zP3X8Vw; csrftoken=75708152116%3AkD3pzVCODMkFYg%3A29%3AAYcfPgWmGOzCW_LBaRW6krhcjOOjf36oh92zP3X8Vw; ds_user_id=75708152116;",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://www.instagram.com/api/v1/friendships/261571593/followers/",
+							"protocol": "https",
+							"host": [
+								"www",
+								"instagram",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"friendships",
+								"261571593",
+								"followers",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Info User ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Instagram 219.0.0.12.117 Android",
+								"type": "text"
+							},
+							{
+								"key": "x-ig-app-id",
+								"value": "936619743392459",
+								"type": "text"
+							},
+							{
+								"key": "csrftoken",
+								"value": "2tx2XMQ1auR7nirNU_fRIf",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "sessionid",
+								"value": "75708152116%3AsxDzDMvyHz8iOd%3A14%3AAYcAboxx7_gMNVKRma-jra3bIvz3FzP_qBD--UQoiA75708152116%3A2qaTX6LU55zqcv%3A8%3AAYcWWDcdhurtjQ0denv4PFzEgZ8BC9nAKB8XAI_kRw",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "ds_user_id",
+								"value": "75708152116",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Cookie",
+								"value": "csrftoken=Zcjlzb_jxs7mA-VWoeardn; datr=GYFlaGT5eSRZR1uxVfcjmObU; ig_did=A553CBBF-DB75-41C7-B845-40A5680919A7; mid=aGWBGgAEAAGRevFxhzm-aWYV8XON; ig_nrcb=1; ds_user_id=75708152116; sessionid=75708152116%3AJhaf1DdcGzdyJQ%3A25%3AAYdWxigXVCdO3bU2u31Ox9VDuWVF8dHHCqmUbHAKxQ; rur=\"NHA\\05475708152116\\0541783038274:01fe599ddf5ac2b6515869d7ae56cfc044a748b410565534f313d922d891def45d7753db\"; wd=753x688",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://i.instagram.com/api/v1/users/261571593/info/",
+							"protocol": "https",
+							"host": [
+								"i",
+								"instagram",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"261571593",
+								"info",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Imagem URL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://instagram.fssa3-1.fna.fbcdn.net/v/t51.2885-19/511533409_18071505431303163_7176310435972336794_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_ht=instagram.fssa3-1.fna.fbcdn.net&_nc_cat=103&_nc_oc=Q6cZ2QFDd-o9dtQ07r8-xpWSVkJushfkAtFKQUkOTliiywU-xQZ6xXU8WShgt9sqN2EW8RjA6Z698h1dujYkvbmuieXi&_nc_ohc=PuxscM-Bj5gQ7kNvwFj_RPX&_nc_gid=eZmC3SjZhN4OJZy1oXjkQA&edm=APQMUHMBAAAA&ccb=7-5&oh=00_AfM9q4TEZz1bQSey5XO3dbopJ-Nzm3rQ1qVI1GWoUAluxw&oe=6866503A&_nc_sid=6ff7c8",
+							"protocol": "https",
+							"host": [
+								"instagram",
+								"fssa3-1",
+								"fna",
+								"fbcdn",
+								"net"
+							],
+							"path": [
+								"v",
+								"t51.2885-19",
+								"511533409_18071505431303163_7176310435972336794_n.jpg"
+							],
+							"query": [
+								{
+									"key": "stp",
+									"value": "dst-jpg_s150x150_tt6"
+								},
+								{
+									"key": "_nc_ht",
+									"value": "instagram.fssa3-1.fna.fbcdn.net"
+								},
+								{
+									"key": "_nc_cat",
+									"value": "103"
+								},
+								{
+									"key": "_nc_oc",
+									"value": "Q6cZ2QFDd-o9dtQ07r8-xpWSVkJushfkAtFKQUkOTliiywU-xQZ6xXU8WShgt9sqN2EW8RjA6Z698h1dujYkvbmuieXi"
+								},
+								{
+									"key": "_nc_ohc",
+									"value": "PuxscM-Bj5gQ7kNvwFj_RPX"
+								},
+								{
+									"key": "_nc_gid",
+									"value": "eZmC3SjZhN4OJZy1oXjkQA"
+								},
+								{
+									"key": "edm",
+									"value": "APQMUHMBAAAA"
+								},
+								{
+									"key": "ccb",
+									"value": "7-5"
+								},
+								{
+									"key": "oh",
+									"value": "00_AfM9q4TEZz1bQSey5XO3dbopJ-Nzm3rQ1qVI1GWoUAluxw"
+								},
+								{
+									"key": "oe",
+									"value": "6866503A"
+								},
+								{
+									"key": "_nc_sid",
+									"value": "6ff7c8"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
