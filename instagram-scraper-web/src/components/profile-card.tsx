@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Lock, Users, ImageIcon, CheckCircle } from "lucide-react";
+import { Lock, Users, ImageIcon, CheckCircle, Download } from "lucide-react";
 import { InstagramProfile } from "@/types";
 import { useApp } from "@/contexts/app-context";
 
@@ -113,35 +113,24 @@ export default function ProfileCard({
         <button
           onClick={onAction}
           disabled={disabled || profile.is_private}
-          className="w-full bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white py-3 px-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white py-3 px-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
+          <Download size={20} />
           {profile.is_private ? "Private Account" : actionLabel}
         </button>
       )}
 
       {status === "collected" && (
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() => {
-              setCurrentUser(profile);
-              router.push("/verify");
-            }}
-            className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white py-2 px-4 rounded-xl font-medium hover:bg-[#c12958] transition-colors cursor-pointer"
-          >
-            <CheckCircle size={15} />
-            Verify
-          </button>
-          <button
-            onClick={() => {
-              setCurrentUser(profile);
-              router.push("/compare");
-            }}
-            className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white py-2 px-4 rounded-xl font-medium hover:bg-[#6a2d91] transition-colors cursor-pointer"
-          >
-            <Users size={15} />
-            Compare
-          </button>
-        </div>
+        <button
+          onClick={() => {
+            setCurrentUser(profile);
+            router.push("/connections");
+          }}
+          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white py-3 px-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        >
+          <Users size={15} />
+          Connections
+        </button>
       )}
     </div>
   );

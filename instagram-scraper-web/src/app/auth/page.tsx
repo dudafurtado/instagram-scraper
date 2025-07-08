@@ -3,7 +3,7 @@
 import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Download, Key, LogOut, Save, Search } from "lucide-react";
+import { CircleUserRound, IdCard, KeyRound, LogOut, Save } from "lucide-react";
 
 import { Credentials } from "@/types";
 import { useApp } from "@/contexts/app-context";
@@ -21,7 +21,6 @@ export default function CollectionPage() {
   const [formData, setFormData] = useState<Credentials>({
     username: "",
     password: "",
-    search: "",
   });
   const [progress, setProgress] = useState(0);
   const router = useRouter();
@@ -63,10 +62,6 @@ export default function CollectionPage() {
         },
         body: JSON.stringify({
           ...formData,
-          search: formData.search
-            .split("\n")
-            .map((s) => s.trim())
-            .filter(Boolean),
         }),
       });
 
@@ -120,10 +115,10 @@ export default function CollectionPage() {
         </p>
       </div>
 
-      <section className="flex items-center gap-8">
+      <section className="flex justify-center items-center gap-8">
         <div className="w-1/2 bg-white/15 backdrop-blur-xl rounded-3xl shadow-md p-6">
           <div className="flex items-center space-x-3 mb-6">
-            <Key className="w-6 h-6 text-white" />
+            <KeyRound className="w-6 h-6 text-white" />
             <h1 className="text-2xl font-bold text-white">Instagram Login</h1>
           </div>
 
@@ -173,60 +168,6 @@ export default function CollectionPage() {
                 </div>
               </>
             )}
-          </form>
-        </div>
-
-        <div className="w-1/2 bg-white/15 backdrop-blur-xl rounded-3xl shadow-sm p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <Search className="w-6 h-6 text-white" />
-            <h1 className="text-2xl font-bold text-white">Info Collection</h1>
-          </div>
-
-          <form onSubmit={handleSubmitInfo} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">
-                Instagram Username One per Line
-              </label>
-              <textarea
-                value={formData.search}
-                onChange={(e) => handleInputChange("search", e.target.value)}
-                placeholder={`username1
-username2
-username3`}
-                className="w-full px-3 py-2 text-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E1306C] focus:border-transparent resize-none"
-                rows={3}
-                required
-              />
-            </div>
-
-            {isLoading && (
-              <div className="space-y-2">
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-[#E1306C] h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${progress}%` }}
-                  ></div>
-                </div>
-                <p className="text-sm text-white text-center">
-                  Collecting data... {progress}%
-                </p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-white text-[#E1306C] py-3 px-4 rounded-xl font-medium hover:bg-white/70 focus:ring-2 focus:ring-[#E1306C] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center space-x-2 mt-6"
-            >
-              {isLoading ? (
-                <LoadingSpinner size="sm" />
-              ) : (
-                <>
-                  <Download size={20} />
-                  <span>Start Collection</span>
-                </>
-              )}
-            </button>
           </form>
         </div>
       </section>

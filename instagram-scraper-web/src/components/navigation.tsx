@@ -2,17 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, Users, CheckCircle } from "lucide-react";
+import { Home, Search, Users, CheckCircle, LockKeyhole } from "lucide-react";
 
 export default function Navigation() {
   const pathname = usePathname();
 
   const navItems = [
     { href: "/", icon: Home, label: "Home" },
-    { href: "/auth", icon: Search, label: "Auth" },
+    { href: "/auth", icon: LockKeyhole, label: "Auth" },
     { href: "/collect", icon: Search, label: "Collect" },
-    { href: "/verify", icon: CheckCircle, label: "Verify" },
-    { href: "/compare", icon: Users, label: "Compare" },
+    { href: "/connections", icon: Users, label: "Connections" },
   ];
 
   return (

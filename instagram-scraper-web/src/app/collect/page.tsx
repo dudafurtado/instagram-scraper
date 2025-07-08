@@ -2,14 +2,16 @@
 
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import { Clock } from "lucide-react";
+import { Clock, IdCard } from "lucide-react";
 
 import { CollectionJob, InstagramProfile } from "@/types";
 import ProfileCard from "@/components/profile-card";
 import Tabs from "@/components/tabs";
+import AccountInfoModal from "@/components/account-info";
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("to-collect");
+  const [showModal, setShowModal] = useState(false);
   const [accounts, setAccounts] = useState<{
     to_collect: InstagramProfile[];
     collecting: any[];
@@ -93,21 +95,22 @@ export default function DashboardPage() {
           <div className="space-y-6">
             {accounts.collecting.length &&
               accounts.collecting.map((profile, index) => (
-                <div key={index} className="bg-white rounded-3xl p-6 shadow-lg">
-                  <div className="flex items-center space-x-4 mb-4">
+                <div
+                  key={index}
+                  className="bg-white/15 backdrop-blur-xl rounded-3xl p-6 shadow-lg text-white"
+                >
+                  <div className="flex items-center space-x-4 mb-4 ">
                     <img
                       src={`http://localhost:3333/img/${profile.user_id}_${profile.username}.jpg`}
                       alt={profile.username}
                       className="w-16 h-16 rounded-full"
                     />
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {profile.username}
-                      </h3>
-                      <p className="text-gray-600">{profile.full_name}</p>
+                      <h3 className="text-xl font-bold">{profile.username}</h3>
+                      <p>{profile.full_name}</p>
                       <div className="flex items-center space-x-2 mt-1">
-                        <Clock size={16} className="text-[#FCAF45]" />
-                        <span className="text-sm text-gray-500">
+                        <Clock size={16} />
+                        <span className="text-sm">
                           Started{" "}
                           {new Date(profile.started_at!).toLocaleString()}
                         </span>
@@ -122,10 +125,8 @@ export default function DashboardPage() {
 
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                      <p className="text-sm text-gray-600">
-                        Followers Progress
-                      </p>
-                      <div className="bg-gray-200 rounded-full h-2 mt-1">
+                      <p className="text-sm">Followers Progress</p>
+                      <div className="bg-white/20 rounded-full h-2 mt-1">
                         <div
                           className="bg-[#E1306C] h-2 rounded-full transition-all duration-300"
                           style={{
@@ -137,16 +138,14 @@ export default function DashboardPage() {
                           }}
                         ></div>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs mt-1">
                         {profile.progress.followers_collected} /{" "}
                         {profile.progress.total_followers}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">
-                        Following Progress
-                      </p>
-                      <div className="bg-gray-200 rounded-full h-2 mt-1">
+                      <p className="text-sm">Following Progress</p>
+                      <div className="bg-white/20 rounded-full h-2 mt-1">
                         <div
                           className="bg-[#833AB4] h-2 rounded-full transition-all duration-300"
                           style={{
@@ -158,15 +157,15 @@ export default function DashboardPage() {
                           }}
                         ></div>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs mt-1">
                         {profile.progress.following_collected} /{" "}
                         {profile.progress.total_following}
                       </p>
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-2xl p-3">
-                    <p className="text-sm text-gray-600">
+                  <div className="bg-white/20 rounded-2xl p-3">
+                    <p className="text-sm">
                       Images Downloaded: {profile.progress.images_downloaded} /{" "}
                       {profile.progress.total_images}
                     </p>
@@ -193,7 +192,7 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-5xl mx-auto py-8">
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-white mb-4">
           Collect Dashboard
         </h1>
@@ -202,9 +201,20 @@ export default function DashboardPage() {
         </p>
       </div>
 
+      <div className="flex justify-center mb-8">
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-white text-[#E1306C] py-2 px-4 rounded-xl font-medium hover:bg-white/70 flex items-center gap-2"
+        >
+          <IdCard /> Get Account Info
+        </button>
+      </div>
+
       <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
         {renderTabContent}
       </Tabs>
+
+      {showModal && <AccountInfoModal onClose={() => setShowModal(false)} />}
     </div>
   );
 }

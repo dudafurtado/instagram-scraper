@@ -1,7 +1,6 @@
 export interface Credentials {
   username: string;
   password: string;
-  search: string;
 }
 
 export interface User {
