@@ -11,8 +11,11 @@ router.get('/', async () => {
 })
 
 router.post('/instagram/login', [AuthController, 'store'])
+router.post('/instagram/logout', [AuthController, 'destroy'])
 
 router.get('/instagram/accounts', [AccountsController, 'index'])
+router.get('/instagram/account', [AccountsController, 'show'])
+router.post('/instagram/accounts', [AccountsController, 'store'])
 
 router.get('/instagram/collect', [FriendshipsController, 'collect'])
 router.get('/instagram/friendships', [FriendshipsController, 'index'])

@@ -2,8 +2,30 @@ import fs from 'node:fs'
 import path from 'node:path'
 import type { HttpContext } from '@adonisjs/core/http'
 import { InstagramQueue } from '../queues/instagram_queue.js'
+import { readSession } from '../helpers/read_session.js'
+import { readUsers } from '../helpers/users_file.js'
+import AutomationScraperService from '#services/automation_scraper_service'
 
 export default class AccountsController {
+  async store({ request, response }: HttpContext) {
+    const { search } = request.only(['search'])
+
+    if (!search) {
+      return response.badRequest({ message: 'Search field is required.' })
+    }
+
+    const searches = Array.isArray(search) ? search : [search]
+
+    try {
+      await AutomationScraperService.collectInfo(searches)
+
+      return response.ok({ message: 'Info collected successfully' })
+    } catch (err) {
+      console.error(err)
+      return response.internalServerError({ message: 'Error collecting info' })
+    }
+  }
+
   async index({ response }: HttpContext) {
     const filePath = path.join(process.cwd(), 'app', 'data', 'json', 'users.json')
 
@@ -23,6 +45,23 @@ export default class AccountsController {
       collecting,
       collected,
     })
+  }
+
+  async show({ response }: HttpContext) {
+    try {
+      const session = readSession()
+      const users = readUsers()
+      const user = users.find((u: any) => u.username === session.username)
+
+      if (!user) {
+        return response.badRequest({ message: `No user found for username ${session.username}` })
+      }
+
+      return response.ok(user)
+    } catch (err) {
+      console.error(err)
+      return response.status(500).json({ message: err.message })
+    }
   }
 
   public async listFailedJobs({ response }: HttpContext) {

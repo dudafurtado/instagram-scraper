@@ -1,14 +1,13 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright'
-import env from '#start/env'
 import InstagramService from './instagram_service.js'
 import InstagramApi from './clients/instagram_api.js'
 import { BioLink, InfoUser } from '../interfaces/res_info_insta.js'
 import { InstagramCredentials, ScraperUser } from '../interfaces/instagram.js'
 
 export default class AutomationScraperService {
-  static async loginAndCollectInfo(credentials: InstagramCredentials, usernames: string[]) {
+  static async login(credentials: InstagramCredentials) {
     const browser = await chromium.launch({ headless: false })
     const context = await browser.newContext()
     const page = await context.newPage()
@@ -28,59 +27,74 @@ export default class AutomationScraperService {
         await notNow.click()
       }
 
-      const cookies = await context.cookies()
-      const sessionid = cookies.find((c: any) => c.name === 'sessionid')
-      const csrfToken = cookies.find((c: any) => c.name === 'csrftoken')?.value
-      const dsUserId = cookies.find((c: any) => c.name === 'ds_user_id')?.value
+      await this.collectUserInfo(page, credentials.username)
 
-      this.saveSession({
-        username: credentials.username,
-        sessionid,
-        csrfToken,
-        dsUserId,
-      })
+      this.saveSession(context)
+    } finally {
+      await browser.close()
+    }
+  }
 
+  static async loadContextFromSession() {
+    const browser = await chromium.launch({ headless: false })
+    const context = await browser.newContext({
+      storageState: path.join(import.meta.dirname, '../data/json/session.json'),
+    })
+    const page = await context.newPage()
+    return { browser, context, page }
+  }
+
+  static async collectInfo(usernames: string[]) {
+    const browser = await chromium.launch({ headless: false })
+    const context = await browser.newContext({
+      storageState: path.join(import.meta.dirname, '../data/json/session.json'),
+    })
+    const page = await context.newPage()
+
+    try {
       for (const username of usernames) {
-        console.log(`Coletando dados de: ${username}`)
-
-        const targetUserIdPromise = new Promise<string>((resolve) => {
-          page.on('request', (request) => {
-            const url = request.url()
-            if (url.includes('/api/v1/friendships/') && url.includes('/followers')) {
-              const match = url.match(/friendships\/(\d+)\/followers/)
-              if (match) {
-                resolve(match[1])
-              }
-            }
-          })
-        })
-
-        await page.goto(`https://www.instagram.com/${username}/`)
-
-        const posts = await page.getByText(/publicações/).innerText()
-        const profilePic = await page
-          .locator('header img[alt*="Foto do perfil"]')
-          .getAttribute('src')
-
-        await page.getByText(/seguidores/i).click()
-        await page.waitForTimeout(4000)
-
-        const targetUserId = await targetUserIdPromise
-        const info = await InstagramApi.getUserInfo(targetUserId)
-
-        await InstagramService.downloadImage({
-          id: targetUserId,
-          username,
-          profile_pic_url: profilePic,
-        })
-
-        await this.saveUserInfo(targetUserId, posts, info.user)
-
-        console.log(`✔️ ${username} salvo!`)
+        await this.collectUserInfo(page, username)
+        await new Promise((res) => setTimeout(res, 5000))
       }
     } finally {
       await browser.close()
     }
+  }
+
+  static async collectUserInfo(page: any, username: string) {
+    console.log(`▶️ Acessando perfil ${username}`)
+
+    const targetUserIdPromise = new Promise<string>((resolve) => {
+      page.on('request', (request: any) => {
+        const url = request.url()
+        if (url.includes('/api/v1/friendships/') && url.includes('/followers')) {
+          const match = url.match(/friendships\/(\d+)\/followers/)
+          if (match) {
+            resolve(match[1])
+          }
+        }
+      })
+    })
+
+    await page.goto(`https://www.instagram.com/${username}/`)
+
+    const posts = await page.getByText(/publicações/).innerText()
+    const profilePic = await page.locator('header img[alt*="Foto do perfil"]').getAttribute('src')
+
+    await page.getByText(/seguidores/i).click()
+    await page.waitForTimeout(4000)
+
+    const targetUserId = await targetUserIdPromise
+    const info = await InstagramApi.getUserInfo(targetUserId)
+
+    await InstagramService.downloadImage({
+      id: targetUserId,
+      username,
+      profile_pic_url: profilePic,
+    })
+    await this.saveUserInfo(targetUserId, posts, info.user)
+
+    console.log(`✔️ ${username} salvo!`)
   }
 
   static async saveUserInfo(userId: string, posts: string, user: InfoUser) {
@@ -130,23 +144,10 @@ export default class AutomationScraperService {
     fs.writeFileSync(filePath, JSON.stringify(db, null, 2), 'utf-8')
   }
 
-  static saveSession(cookies: any) {
-    const expiredAt = cookies.sessionid?.expires ? new Date(cookies.sessionid.expires * 1000) : null
-
-    const session = {
-      username: cookies.username,
-
-      session_id: cookies.sessionid.value,
-      csrf_token: cookies.csrfToken,
-      ds_user_id: cookies.dsUserId,
-      ig_app_id: env.get('INSTAGRAM_IG_APP_ID'),
-
-      expired_at: expiredAt ? expiredAt.toISOString() : null,
-    }
-
+  static async saveSession(context: any) {
     const dir = path.join(import.meta.dirname, '../data/json')
     const sessionPath = path.join(dir, 'session.json')
 
-    fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2), 'utf-8')
+    await context.storageState({ path: sessionPath })
   }
 }

@@ -1,12 +1,9 @@
-import fs from 'node:fs/promises'
-import { join } from 'node:path'
 import type { HttpContext } from '@adonisjs/core/http'
 import RelationshipService from '#services/friendship_service'
 import { InstagramQueue } from '../queues/instagram_queue.js'
 import { findUserById, readUsers, updateUserStatus, writeUsers } from '../helpers/users_file.js'
-import InstagramService from '#services/instagram_service'
 
-export default class RelationshipsController {
+export default class FriendshipsController {
   public async index({ request, response }: HttpContext) {
     const userId = request.qs().userId
 
@@ -14,47 +11,14 @@ export default class RelationshipsController {
       return response.badRequest({ error: 'Missing userId param' })
     }
 
-    const basePath = './app/data/json'
-    const followersPath = join(basePath, `${userId}_followers.json`)
-    const followingPath = join(basePath, `${userId}_following.json`)
-
-    let followersExists = false
-    let followingExists = false
-
     try {
-      await fs.access(followersPath)
-      followersExists = true
-    } catch {}
+      const relationships = await RelationshipService.list(userId)
 
-    try {
-      await fs.access(followingPath)
-      followingExists = true
-    } catch {}
-
-    let followers = []
-    let following = []
-
-    try {
-      const followersRaw = await fs.readFile(followersPath, 'utf-8')
-      const followingRaw = await fs.readFile(followingPath, 'utf-8')
-
-      const followersData = JSON.parse(followersRaw)
-      const followingData = JSON.parse(followingRaw)
-
-      followers = InstagramService.removeDuplicates(followersData)
-      following = InstagramService.removeDuplicates(followingData)
-
-      await fs.writeFile(followersPath, JSON.stringify(followers, null, 2))
-      await fs.writeFile(followingPath, JSON.stringify(following, null, 2))
+      return response.ok(relationships)
     } catch (err) {
       console.error('Erro ao ler arquivos:', err)
       return response.internalServerError({ error: 'Erro ao processar arquivos' })
     }
-
-    return response.ok({
-      followers,
-      following,
-    })
   }
 
   public async collect({ request, response }: HttpContext) {

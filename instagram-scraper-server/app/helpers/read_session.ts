@@ -16,6 +16,7 @@ export function readSession() {
     csrf_token: session.csrf_token,
     ds_user_id: session.ds_user_id,
     ig_app_id: session.ig_app_id,
+    username: session.username,
   }
 
   return creds
