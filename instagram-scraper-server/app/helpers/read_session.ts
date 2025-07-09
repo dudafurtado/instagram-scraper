@@ -11,10 +11,17 @@ export function readSession() {
   const sessionRaw = fs.readFileSync(sessionPath, 'utf-8')
   const session = JSON.parse(sessionRaw)
 
+  const cookies = session.cookies
+  const getCookie = (name: string) => {
+    const found = cookies.find((c: any) => c.name === name)
+    if (!found) throw new Error(`Cookie "${name}" not found in session.`)
+    return found.value
+  }
+
   const creds = {
-    session_id: session.session_id,
-    csrf_token: session.csrf_token,
-    ds_user_id: session.ds_user_id,
+    session_id: getCookie('sessionid'),
+    csrf_token: getCookie('csrftoken'),
+    ds_user_id: getCookie('ds_user_id'),
     ig_app_id: session.ig_app_id,
     username: session.username,
   }

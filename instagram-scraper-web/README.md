@@ -2,6 +2,85 @@
 
 Interface web para **coletar**, **verificar** e **comparar** seguidores e seguindo do Instagram, usando automação e scraping controlados.
 
+## 🎨 UI Instagram
+
+> Referências da identidade visual do Instagram.
+
+- [📌 Identidade da Marca](https://about.instagram.com/pt-br/brand/)
+- [📐 Layout](https://about.instagram.com/pt-br/brand/layout)
+- [🔤 Font Type](https://about.instagram.com/pt-br/brand/type)
+- [🌈 Gradiente](https://about.instagram.com/pt-br/brand/gradient)
+- [🌈 Gradiente 2](https://gradient.page/ui-gradients/instagram)
+
+---
+
+### 🎨 **Paleta**
+
+| Nome            | HEX       |
+| --------------- | --------- |
+| Amarelo         | `#FFD600` |
+| Laranja         | `#FF7A00` |
+| Rosa            | `#FF0069` |
+| Lilás / Magenta | `#D300C5` |
+| Roxo            | `#7638FA` |
+
+---
+
+### 🌈 **Gradientes**
+
+#### **Amarelo → Laranja → Rosa**
+
+```css
+bg-gradient-to-tr from-[#FFD600] via-[#FF7A00] to-[#FF0069]
+```
+
+#### **Rosa → Lilás → Roxo**
+
+```css
+bg-gradient-to-tr from-[#FF0069] via-[#D300C5] to-[#7638FA]
+```
+
+---
+
+### ✨ **Gradientes com Opacidade e Blur**
+
+#### 🔆 Amarelo → Laranja → Rosa (80% Opacidade + Blur)
+
+```css
+bg-gradient-to-tr from-[#FFD600]/80 via-[#FF7A00]/80 to-[#FF0069]/80 backdrop-blur-xl
+```
+
+#### 🔆 Rosa → Lilás → Roxo (80% Opacidade + Blur)
+
+```css
+bg-gradient-to-tr from-[#FF0069]/80 via-[#D300C5]/80 to-[#7638FA]/80 backdrop-blur-xl
+```
+
+---
+
+## 📌 **Outras Cores Utilizadas**
+
+| Nome             | HEX       | RGB            |
+| ---------------- | --------- | -------------- |
+| Vermelho Violeta | `#bc2a8d` | `188, 42, 141` |
+| Amarelo          | `#fccc63` | `252, 204, 99` |
+| Laranja          | `#fbad50` | `251, 173, 80` |
+| Rosinha Salmão   | `#dc6c6f` | —              |
+
+---
+
+### ✅ **Gradiente Extra**
+
+#### 🔸 **Degradê Personalizado**
+
+```css
+bg-gradient-to-tr from-[#fbad50] to-[#bc2a8d]
+```
+
+---
+
+> 📌 **Obs:** Eu não segui as cores oficiais.
+
 ## 🚦 Fluxo de Uso
 
 1️⃣ **Autenticação no Instagram**  

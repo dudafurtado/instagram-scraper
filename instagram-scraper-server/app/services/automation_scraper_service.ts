@@ -27,12 +27,46 @@ export default class AutomationScraperService {
         await notNow.click()
       }
 
-      await this.collectUserInfo(page, credentials.username)
-
       this.saveSession(context)
+
+      await this.doHumanInteractions(page)
+      await this.collectUserInfo(page, credentials.username)
     } finally {
       await browser.close()
     }
+  }
+
+  static async doHumanInteractions(page: any) {
+    await page.waitForTimeout(3000)
+
+    // 🗂️ Tente localizar o botão de curtir de forma robusta
+    const firstLikeButton = await page.getByRole('button', { name: 'Curtir' }).first()
+
+    if (await firstLikeButton.isVisible()) {
+      await firstLikeButton.click()
+      console.log('👉 Curtiu o primeiro post.')
+    } else {
+      console.log('⚠️ Botão de curtir não encontrado ou não visível.')
+    }
+
+    await page.waitForTimeout(2000)
+
+    // 🗂️ Localizar sugestões de seguir usando texto robusto
+    const followButtons = page.locator('button:has-text("Seguir")')
+
+    const firstFollow = followButtons.nth(0)
+    if (await firstFollow.isVisible()) {
+      await firstFollow.click()
+      console.log('✅ Seguiu o primeiro sugerido.')
+    }
+
+    const secondFollow = followButtons.nth(1)
+    if (await secondFollow.isVisible()) {
+      await secondFollow.click()
+      console.log('✅ Seguiu o segundo sugerido.')
+    }
+
+    await page.waitForTimeout(2000)
   }
 
   static async loadContextFromSession() {
@@ -79,7 +113,6 @@ export default class AutomationScraperService {
     await page.goto(`https://www.instagram.com/${username}/`)
 
     const posts = await page.getByText(/publicações/).innerText()
-    const profilePic = await page.locator('header img[alt*="Foto do perfil"]').getAttribute('src')
 
     await page.getByText(/seguidores/i).click()
     await page.waitForTimeout(4000)
@@ -87,12 +120,14 @@ export default class AutomationScraperService {
     const targetUserId = await targetUserIdPromise
     const info = await InstagramApi.getUserInfo(targetUserId)
 
+    console.log(info)
+
+    const user = await this.saveUserInfo(targetUserId, posts, info.user)
     await InstagramService.downloadImage({
       id: targetUserId,
       username,
-      profile_pic_url: profilePic,
+      profile_pic_url: user.profile_pic_url,
     })
-    await this.saveUserInfo(targetUserId, posts, info.user)
 
     console.log(`✔️ ${username} salvo!`)
   }
@@ -142,6 +177,8 @@ export default class AutomationScraperService {
     db.push(data)
 
     fs.writeFileSync(filePath, JSON.stringify(db, null, 2), 'utf-8')
+
+    return data
   }
 
   static async saveSession(context: any) {
