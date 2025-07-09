@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className={`${inter.className}`}>
         <Toaster />
         <AppProvider>
-          <main className="min-h-screen px-4 pt-3 bg-gradient-to-tr from-[#feda75] via-[#d62976] to-[#4f5bd5]">
+          <main className="min-h-screen px-4 pt-3 bg-gradient-to-tr from-[#fbad50] to-[#bc2a8d]">
             <Navigation />
             {children}
           </main>

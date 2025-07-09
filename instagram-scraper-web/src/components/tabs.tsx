@@ -34,7 +34,7 @@ export default function Tabs({
             onClick={() => handleTabChange(tab.id)}
             className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-200 ${
               activeTab === tab.id
-                ? "bg-white text-[#E1306C] shadow-lg"
+                ? "bg-white text-[#dc6c6f] shadow-lg"
                 : "text-white/80 hover:text-white hover:bg-white/10"
             }`}
           >
@@ -43,7 +43,7 @@ export default function Tabs({
               <span
                 className={`ml-2 px-2 py-1 rounded-full text-xs ${
                   activeTab === tab.id
-                    ? "bg-[#E1306C] text-white"
+                    ? "bg-[#dc6c6f] text-white"
                     : "bg-white/20"
                 }`}
               >

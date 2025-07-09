@@ -20,6 +20,7 @@ import SearchFilter from "@/components/search-filter";
 import { useUserFilter } from "@/hooks/use-user-filter";
 import ProfileCard from "@/components/profile-card";
 import { ComparisonResult } from "@/types";
+import InfoAccountDetail from "@/components/info-account";
 
 export default function ConnectionsPage() {
   const { currentUser, setIsLoading } = useApp();
@@ -62,7 +63,7 @@ export default function ConnectionsPage() {
 
     try {
       const res = await fetch(
-        `http://localhost:3333/instagram/compare?userId=${currentUser.user_id}`,
+        `http://localhost:3333/instagram/compare?userId=${currentUser?.user_id}`,
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -84,7 +85,7 @@ export default function ConnectionsPage() {
 
     try {
       const checkRes = await fetch(
-        `http://localhost:3333/instagram/friendships?userId=${currentUser.user_id}`,
+        `http://localhost:3333/instagram/friendships?userId=${currentUser?.user_id}`,
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -121,14 +122,14 @@ export default function ConnectionsPage() {
   return (
     <div className="max-w-5xl mx-auto py-8">
       <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-white">Connections</h1>
+        <h1 className="text-4xl font-bold text-white">Connections</h1>
         <p className="text-lg text-white/80">
           Verify and Compare Followers and Following
         </p>
       </div>
 
-      <section className="max-w-sm mx-auto">
-        <ProfileCard key="1" profile={currentUser} status="lists" />
+      <section className="max-w-5xl mx-auto">
+        <InfoAccountDetail {...currentUser} />
       </section>
 
       {collectionData && (
@@ -146,7 +147,7 @@ export default function ConnectionsPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleDownloadExcel("followers")}
-                    className="bg-[#FCAF45] hover:bg-[#FCAF45] p-2 rounded-lg flex items-center justify-center cursor-pointer"
+                    className="bg-[#fbad50] hover:bg-[#fbad50] hover:z-30 hover:scale-105 p-2 rounded-lg flex items-center justify-center cursor-pointer"
                   >
                     <FileSpreadsheet className="w-4 h-4 text-white" />
                     <span className="text-xs text-white ml-1">Excel</span>
@@ -162,8 +163,8 @@ export default function ConnectionsPage() {
                     className={`
     w-22 h-8 flex items-center justify-center 
     rounded-md transition-colors
-    ${expanded.followers ? "bg-[#833AB4]" : "bg-[#6e2b97]"} 
-    hover:brightness-110 cursor-pointer
+    ${expanded.followers ? "bg-[#bc2a8d]/70" : "bg-[#bc2a8d]/70"} 
+    hover:z-30 hover:scale-105 hover:brightness-110 cursor-pointer
   `}
                   >
                     {expanded.followers ? (
@@ -214,7 +215,7 @@ export default function ConnectionsPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleDownloadExcel("following")}
-                    className="bg-[#FCAF45] hover:bg-[#FCAF45] p-2 rounded-lg flex items-center justify-center cursor-pointer"
+                    className="bg-[#fbad50] hover:bg-[#fbad50] hover:z-30 hover:scale-105 p-2 rounded-lg flex items-center justify-center cursor-pointer"
                   >
                     <FileSpreadsheet className="w-4 h-4 text-white" />
                     <span className="text-xs text-white ml-1">Excel</span>
@@ -229,7 +230,8 @@ export default function ConnectionsPage() {
                     className={`
     w-22 h-8 flex items-center justify-center 
     rounded-md transition-colors
-    ${expanded.following ? "bg-[#833AB4]" : "bg-[#833AB4]"} 
+    ${expanded.following ? "bg-[#bc2a8d]/70" : "bg-[#bc2a8d]/70"} 
+    hover:z-30 hover:scale-105
     hover:brightness-110 cursor-pointer
   `}
                   >
@@ -286,7 +288,7 @@ export default function ConnectionsPage() {
               <div className="flex gap-2">
                 <button
                   //   onClick={() => handleDownloadExcel("notFollowedBack")}
-                  className="bg-[#FCAF45] hover:bg-[#FCAF45] p-2 rounded-lg flex items-center justify-center cursor-pointer"
+                  className="bg-[#fbad50] hover:bg-[#fbad50] hover:z-30 hover:scale-105 p-2 rounded-lg flex items-center justify-center cursor-pointer"
                 >
                   <FileSpreadsheet className="w-4 h-4 text-white" />
                   <span className="text-xs text-white ml-1">Excel</span>
@@ -301,8 +303,8 @@ export default function ConnectionsPage() {
                   className={`
     w-22 h-8 flex items-center justify-center 
     rounded-md transition-colors
-    ${expanded.notFollowedBack ? "bg-[#833AB4]" : "bg-[#833AB4]"} 
-    hover:brightness-110 cursor-pointer
+    ${expanded.notFollowedBack ? "bg-[#bc2a8d]/70" : "bg-[#bc2a8d]/70"} 
+    hover:z-30 hover:scale-105 hover:brightness-110 cursor-pointer
   `}
                 >
                   {expanded.notFollowedBack ? (
@@ -359,7 +361,7 @@ export default function ConnectionsPage() {
               <div className="flex gap-2">
                 <button
                   //   onClick={() => handleDownloadExcel("notFollowingBack")}
-                  className="bg-[#FCAF45] hover:bg-[#FCAF45] p-2 rounded-lg flex items-center justify-center cursor-pointer"
+                  className="bg-[#fbad50] hover:bg-[#fbad50] hover:z-30 hover:scale-105 p-2 rounded-lg flex items-center justify-center cursor-pointer"
                 >
                   <FileSpreadsheet className="w-4 h-4 text-white" />
                   <span className="text-xs text-white ml-1">Excel</span>
@@ -374,8 +376,8 @@ export default function ConnectionsPage() {
                   className={`
     w-22 h-8 flex items-center justify-center 
     rounded-md transition-colors
-    ${expanded.notFollowedBack ? "bg-[#833AB4]" : "bg-[#833AB4]"} 
-    hover:brightness-110 cursor-pointer
+    ${expanded.notFollowedBack ? "bg-[#bc2a8d]/70" : "bg-[#bc2a8d]/70"} 
+    hover:z-30 hover:scale-105 hover:brightness-110 cursor-pointer
   `}
                 >
                   {expanded.notFollowingBack ? (

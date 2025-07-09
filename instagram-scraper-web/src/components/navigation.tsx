@@ -27,8 +27,8 @@ export default function Navigation() {
               href={item.href}
               className={`flex items-center space-x-2 px-3 py-2 rounded-xl transition-colors ${
                 isActive
-                  ? "bg-blue-50 text-[#E1306C]"
-                  : "text-white hover:text-[#833AB4] hover:bg-gray-50/60"
+                  ? "bg-blue-50 text-[#dc6c6f] border"
+                  : "text-white hover:text-[#fbad50] hover:border border:bg-gray-50/60"
               }`}
             >
               <Icon size={20} />

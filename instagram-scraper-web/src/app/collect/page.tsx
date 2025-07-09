@@ -4,18 +4,18 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Clock, IdCard } from "lucide-react";
 
-import { CollectionJob, InstagramProfile } from "@/types";
+import { ScraperUser } from "@/types";
 import ProfileCard from "@/components/profile-card";
 import Tabs from "@/components/tabs";
-import AccountInfoModal from "@/components/account-info";
+import AccountInfoModal from "@/components/search-account";
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("to-collect");
   const [showModal, setShowModal] = useState(false);
   const [accounts, setAccounts] = useState<{
-    to_collect: InstagramProfile[];
-    collecting: any[];
-    collected: InstagramProfile[];
+    to_collect: ScraperUser[];
+    collecting: ScraperUser[];
+    collected: ScraperUser[];
   }>({
     to_collect: [],
     collecting: [],
@@ -111,14 +111,26 @@ export default function DashboardPage() {
                       <div className="flex items-center space-x-2 mt-1">
                         <Clock size={16} />
                         <span className="text-sm">
-                          Started{" "}
-                          {new Date(profile.started_at!).toLocaleString()}
+                          {profile.progress ? (
+                            <>
+                              Started{" "}
+                              {new Date(
+                                profile.progress.started_at
+                              ).toLocaleString()}
+                            </>
+                          ) : (
+                            "No data"
+                          )}
                         </span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="bg-[#FCAF45] text-white px-3 py-1 rounded-full text-sm font-medium">
-                        Position #{profile.position_in_queue}
+                      <div className="bg-white text-[#dc6c6f] px-3 py-1 rounded-full text-sm font-medium">
+                        {profile.progress ? (
+                          <>Position #{profile.progress.position_in_queue}</>
+                        ) : (
+                          "No data"
+                        )}
                       </div>
                     </div>
                   </div>
@@ -131,16 +143,21 @@ export default function DashboardPage() {
                           className="bg-[#E1306C] h-2 rounded-full transition-all duration-300"
                           style={{
                             width: `${
+                              profile.progress &&
                               (profile.progress.followers_collected /
                                 profile.progress.total_followers) *
-                              100
+                                100
                             }%`,
                           }}
                         ></div>
                       </div>
                       <p className="text-xs mt-1">
-                        {profile.progress.followers_collected} /{" "}
-                        {profile.progress.total_followers}
+                        {profile.progress && (
+                          <>
+                            {profile.progress.followers_collected} /{" "}
+                            {profile.progress.total_followers}
+                          </>
+                        )}
                       </p>
                     </div>
                     <div>
@@ -150,24 +167,36 @@ export default function DashboardPage() {
                           className="bg-[#833AB4] h-2 rounded-full transition-all duration-300"
                           style={{
                             width: `${
+                              profile.progress &&
                               (profile.progress.following_collected /
                                 profile.progress.total_following) *
-                              100
+                                100
                             }%`,
                           }}
                         ></div>
                       </div>
                       <p className="text-xs mt-1">
-                        {profile.progress.following_collected} /{" "}
-                        {profile.progress.total_following}
+                        {profile.progress && (
+                          <>
+                            {profile.progress.following_collected} /{" "}
+                            {profile.progress.total_following}
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>
 
                   <div className="bg-white/20 rounded-2xl p-3">
                     <p className="text-sm">
-                      Images Downloaded: {profile.progress.images_downloaded} /{" "}
-                      {profile.progress.total_images}
+                      Images Downloaded:{" "}
+                      {profile.progress ? (
+                        <>
+                          {profile.progress.images_downloaded} /{" "}
+                          {profile.progress.total_images}
+                        </>
+                      ) : (
+                        ""
+                      )}
                     </p>
                   </div>
                 </div>
@@ -204,7 +233,7 @@ export default function DashboardPage() {
       <div className="flex justify-center mb-8">
         <button
           onClick={() => setShowModal(true)}
-          className="bg-white text-[#E1306C] py-2 px-4 rounded-xl font-medium hover:bg-white/70 flex items-center gap-2"
+          className="bg-white text-[#dc6c6f] py-2 px-4 rounded-xl font-medium hover:bg-white/70 flex items-center gap-2"
         >
           <IdCard /> Get Account Info
         </button>

@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Lock, Users, ImageIcon, CheckCircle, Download } from "lucide-react";
-import { InstagramProfile } from "@/types";
+import { Lock, Users, ImageIcon, Download } from "lucide-react";
+import { ScraperUser } from "@/types";
 import { useApp } from "@/contexts/app-context";
 
 interface ProfileCardProps {
-  profile: InstagramProfile;
+  profile: ScraperUser;
   status?: "to-collect" | "collected" | "lists";
   onAction?: () => void;
   actionLabel?: string;
@@ -26,9 +26,9 @@ export default function ProfileCard({
   const getStatusColor = () => {
     switch (status) {
       case "collected":
-        return "bg-[#E1306C] text-white";
+        return "bg-[#fbad50] text-white";
       case "to-collect":
-        return "bg-[#833AB4] text-white";
+        return "bg-[#bc2a8d]/70 text-white";
     }
   };
 
@@ -113,7 +113,7 @@ export default function ProfileCard({
         <button
           onClick={onAction}
           disabled={disabled || profile.is_private}
-          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white py-3 px-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 bg-[#bc2a8d]/70 hover:z-30 hover:scale-105 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           <Download size={20} />
           {profile.is_private ? "Private Account" : actionLabel}
@@ -126,7 +126,7 @@ export default function ProfileCard({
             setCurrentUser(profile);
             router.push("/connections");
           }}
-          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white py-3 px-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 bg-[#fbad50] hover:z-30 hover:scale-105 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           <Users size={15} />
           Connections

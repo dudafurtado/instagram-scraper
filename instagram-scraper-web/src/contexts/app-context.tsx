@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, type ReactNode } from "react";
-import type { Credentials, CollectionData } from "@/types";
+import type { Credentials, CollectionData, ScraperUser } from "@/types";
 
 interface AppContextType {
   credentials: Credentials | null;
@@ -10,8 +10,8 @@ interface AppContextType {
   setCollectionData: (data: CollectionData) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
-  currentUser: any;
-  setCurrentUser: (id: any) => void;
+  currentUser: ScraperUser | null;
+  setCurrentUser: (data: ScraperUser | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -23,7 +23,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     following: [],
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState("");
+  const [currentUser, setCurrentUser] = useState<ScraperUser | null>(null);
 
   return (
     <AppContext.Provider

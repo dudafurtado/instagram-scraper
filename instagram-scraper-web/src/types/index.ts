@@ -68,3 +68,35 @@ export interface ComparisonData {
   youFollowButTheyDont: InstagramProfile[];
   theyFollowButYouDont: InstagramProfile[];
 }
+
+export interface ScraperUser {
+  user_id: string;
+  username: string;
+  full_name: string;
+  biography: string[];
+  urls: string[];
+  profile_pic_url: string;
+  posts: string;
+  follower_count: number;
+  following_count: number;
+  is_private: boolean;
+  is_bestie: boolean;
+  is_verified: boolean;
+  status: string;
+  created_at: string;
+  address_street?: string;
+  city_name?: string;
+  contact_phone_number?: string;
+  public_email?: string;
+  public_phone_number?: string;
+  progress?: {
+    followers_collected: number;
+    following_collected: number;
+    images_downloaded: number;
+    total_followers: number;
+    total_following: number;
+    total_images: number;
+    started_at: string;
+    position_in_queue: number;
+  };
+}

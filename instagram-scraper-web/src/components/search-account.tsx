@@ -71,7 +71,7 @@ export default function AccountInfoModal({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-gradient-to-tr from-[#feda75] via-[#d62976] to-[#4f5bd5] rounded-3xl shadow-lg p-8 w-full max-w-lg">
+      <div className="bg-gradient-to-tr from-[#fbad50] to-[#bc2a8d] rounded-3xl shadow-lg p-8 w-full max-w-lg">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
             <CircleUser className="w-6 h-6" /> Account Info
@@ -93,7 +93,7 @@ export default function AccountInfoModal({ onClose }: Props) {
             onChange={(e) => setSearch(e.target.value)}
             placeholder={`username1\nusername2\nusername3\nusername4`}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/70 focus:border-transparent resize-none text-white bg-white/10"
+            className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#fccc63] focus:border-transparent resize-none text-white bg-white/10"
             required
           />
 
@@ -101,7 +101,7 @@ export default function AccountInfoModal({ onClose }: Props) {
             <div className="space-y-2">
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className="bg-[#E1306C] h-2 rounded-full transition-all duration-300"
+                  className="bg-[#dc6c6f] h-2 rounded-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
@@ -114,7 +114,7 @@ export default function AccountInfoModal({ onClose }: Props) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full gap-2 bg-white text-[#E1306C] py-3 px-4 rounded-xl font-medium hover:bg-white/70 focus:ring-2 focus:ring-[#E1306C] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center space-x-2"
+            className="w-full gap-2 bg-white text-[#dc6c6f] py-3 px-4 rounded-xl font-medium hover:bg-white/70 focus:ring-2 focus:ring-[#E1306C] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center space-x-2"
           >
             {isLoading ? (
               <LoadingSpinner size="sm" />
