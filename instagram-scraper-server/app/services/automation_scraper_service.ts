@@ -13,7 +13,7 @@ export default class AutomationScraperService {
     const page = await context.newPage()
 
     try {
-      await page.goto('https://www.instagram.com/accounts/login/')
+      await page.goto('https://www.instagram.com/')
       await page.getByRole('textbox', { name: 'Telefone, nome de usuário ou' }).click()
       await page
         .getByRole('textbox', { name: 'Telefone, nome de usuário ou' })
@@ -27,10 +27,9 @@ export default class AutomationScraperService {
         await notNow.click()
       }
 
-      this.saveSession(context)
-
       await this.doHumanInteractions(page)
-      await this.collectUserInfo(page, credentials.username)
+      await this.saveSession(context)
+      await this.collectUserInfo(page, credentials.username, true)
     } finally {
       await browser.close()
     }
@@ -39,7 +38,6 @@ export default class AutomationScraperService {
   static async doHumanInteractions(page: any) {
     await page.waitForTimeout(3000)
 
-    // 🗂️ Tente localizar o botão de curtir de forma robusta
     const firstLikeButton = await page.getByRole('button', { name: 'Curtir' }).first()
 
     if (await firstLikeButton.isVisible()) {
@@ -51,7 +49,6 @@ export default class AutomationScraperService {
 
     await page.waitForTimeout(2000)
 
-    // 🗂️ Localizar sugestões de seguir usando texto robusto
     const followButtons = page.locator('button:has-text("Seguir")')
 
     const firstFollow = followButtons.nth(0)
@@ -70,11 +67,13 @@ export default class AutomationScraperService {
   }
 
   static async loadContextFromSession() {
-    const browser = await chromium.launch({ headless: false })
+    const browser = await chromium.launch({ headless: false, devtools: true })
     const context = await browser.newContext({
       storageState: path.join(import.meta.dirname, '../data/json/session.json'),
+      viewport: { width: 1280, height: 720 },
     })
     const page = await context.newPage()
+
     return { browser, context, page }
   }
 
@@ -87,7 +86,7 @@ export default class AutomationScraperService {
 
     try {
       for (const username of usernames) {
-        await this.collectUserInfo(page, username)
+        await this.collectUserInfo(page, username, false)
         await new Promise((res) => setTimeout(res, 5000))
       }
     } finally {
@@ -95,7 +94,7 @@ export default class AutomationScraperService {
     }
   }
 
-  static async collectUserInfo(page: any, username: string) {
+  static async collectUserInfo(page: any, username: string, isLogged: boolean) {
     console.log(`▶️ Acessando perfil ${username}`)
 
     const targetUserIdPromise = new Promise<string>((resolve) => {
@@ -122,7 +121,7 @@ export default class AutomationScraperService {
 
     console.log(info)
 
-    const user = await this.saveUserInfo(targetUserId, posts, info.user)
+    const user = await this.saveUserInfo(targetUserId, posts, info.user, isLogged)
     await InstagramService.downloadImage({
       id: targetUserId,
       username,
@@ -132,7 +131,7 @@ export default class AutomationScraperService {
     console.log(`✔️ ${username} salvo!`)
   }
 
-  static async saveUserInfo(userId: string, posts: string, user: InfoUser) {
+  static async saveUserInfo(userId: string, posts: string, user: InfoUser, isLogged: boolean) {
     const data = {
       user_id: userId,
 
@@ -157,6 +156,7 @@ export default class AutomationScraperService {
       public_phone_number: user.public_phone_number,
 
       status: 'to_collect',
+      is_logged: isLogged,
 
       created_at: new Date().toISOString(),
     }

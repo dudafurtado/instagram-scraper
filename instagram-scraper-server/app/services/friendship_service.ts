@@ -4,34 +4,40 @@ import InstagramService from './instagram_service.js'
 
 export default class RelationshipService {
   static async list(userId: string) {
+    if (!userId) {
+      throw new Error('User ID is required')
+    }
+
     const basePath = './app/data/json'
     const followersPath = join(basePath, `${userId}_followers.json`)
     const followingPath = join(basePath, `${userId}_following.json`)
 
-    let followersExists = false
-    let followingExists = false
+    const followersExists = await fs
+      .access(followersPath)
+      .then(() => true)
+      .catch(() => false)
 
-    try {
-      await fs.access(followersPath)
-      followersExists = true
-    } catch {}
-
-    try {
-      await fs.access(followingPath)
-      followingExists = true
-    } catch {}
+    const followingExists = await fs
+      .access(followingPath)
+      .then(() => true)
+      .catch(() => false)
 
     let followers = []
     let following = []
 
-    const followersRaw = await fs.readFile(followersPath, 'utf-8')
-    const followingRaw = await fs.readFile(followingPath, 'utf-8')
+    if (followersExists) {
+      const followersRaw = await fs.readFile(followersPath, 'utf-8')
+      followers = followersRaw.trim()
+        ? InstagramService.removeDuplicates(JSON.parse(followersRaw))
+        : []
+    }
 
-    const followersData = JSON.parse(followersRaw)
-    const followingData = JSON.parse(followingRaw)
-
-    followers = InstagramService.removeDuplicates(followersData)
-    following = InstagramService.removeDuplicates(followingData)
+    if (followingExists) {
+      const followingRaw = await fs.readFile(followingPath, 'utf-8')
+      following = followingRaw.trim()
+        ? InstagramService.removeDuplicates(JSON.parse(followingRaw))
+        : []
+    }
 
     await fs.writeFile(followersPath, JSON.stringify(followers, null, 2))
     await fs.writeFile(followingPath, JSON.stringify(following, null, 2))

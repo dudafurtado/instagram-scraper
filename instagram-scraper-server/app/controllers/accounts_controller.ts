@@ -2,9 +2,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import type { HttpContext } from '@adonisjs/core/http'
 import { InstagramQueue } from '../queues/instagram_queue.js'
-import { readSession } from '../helpers/read_session.js'
-import { readUsers } from '../helpers/users_file.js'
 import AutomationScraperService from '#services/automation_scraper_service'
+import { readUsers } from '../helpers/users_file.js'
 
 export default class AccountsController {
   async store({ request, response }: HttpContext) {
@@ -49,12 +48,11 @@ export default class AccountsController {
 
   async show({ response }: HttpContext) {
     try {
-      const session = readSession()
       const users = readUsers()
-      const user = users.find((u: any) => u.username === session.username)
+      const user = users.find((u: any) => u.isLogged === true)
 
       if (!user) {
-        return response.badRequest({ message: `No user found for username ${session.username}` })
+        return response.badRequest({ message: `No user found logged` })
       }
 
       return response.ok(user)
