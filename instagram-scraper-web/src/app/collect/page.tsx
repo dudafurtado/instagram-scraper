@@ -233,7 +233,7 @@ export default function DashboardPage() {
       <div className="flex justify-center mb-8">
         <button
           onClick={() => setShowModal(true)}
-          className="bg-white text-[#dc6c6f] py-2 px-4 rounded-xl font-medium hover:bg-white/70 flex items-center gap-2"
+          className="bg-white/20 text-white py-2 px-4 rounded-xl font-medium hover:bg-white hover:text-[#dc6c6f] hover:z-30 hover:scale-102 transition-all duration-200 shadow-lg flex items-center gap-2 cursor-pointer"
         >
           <IdCard /> Get Account Info
         </button>

@@ -71,14 +71,14 @@ export default function AccountInfoModal({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-gradient-to-tr from-[#fbad50] to-[#bc2a8d] rounded-3xl shadow-lg p-8 w-full max-w-lg">
+      <div className="bg-gradient-to-tr from-[#fbad50] to-[#bc2a8d] rounded-3xl shadow-lg p-8 w-full max-w-lg mx-4">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
             <CircleUser className="w-6 h-6" /> Account Info
           </h2>
           <button
             onClick={onClose}
-            className="text-white hover:text-gray-300 text-xl"
+            className="text-white hover:text-gray-300 text-xl cursor-pointer"
           >
             &times;
           </button>
@@ -114,7 +114,7 @@ export default function AccountInfoModal({ onClose }: Props) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full gap-2 bg-white text-[#dc6c6f] py-3 px-4 rounded-xl font-medium hover:bg-white/70 focus:ring-2 focus:ring-[#E1306C] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center space-x-2"
+            className="w-full gap-2 bg-white/20 text-white py-3 px-4 rounded-xl font-medium hover:bg-white hover:text-[#dc6c6f] hover:z-30 hover:scale-102 transition-all duration-200 focus:ring-2 focus:ring-[#E1306C] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center space-x-2"
           >
             {isLoading ? (
               <LoadingSpinner size="sm" />

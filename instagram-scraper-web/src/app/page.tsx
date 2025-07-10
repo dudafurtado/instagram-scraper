@@ -38,7 +38,7 @@ export default function LandingPage() {
 
         <Link
           href="/auth"
-          className="inline-flex items-center space-x-3 bg-white text-[#dc6c6f] px-8 py-4 rounded-2xl font-bold text-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+          className="inline-flex items-center space-x-3 bg-white/20 text-white px-8 py-4 rounded-2xl font-bold text-xl hover:bg-white hover:text-[#dc6c6f] hover:shadow-2xl hover:scale-102 transition-all duration-300"
         >
           <span>Start</span>
           <ArrowRight size={24} />

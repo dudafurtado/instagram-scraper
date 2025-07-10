@@ -27,21 +27,21 @@ export default function Tabs({
 
   return (
     <div>
-      <div className="flex gap-8 bg-white/20 backdrop-blur-sm rounded-2xl p-2 mb-8">
+      <div className="flex gap-2 md:gap-4 bg-white/20 backdrop-blur-sm rounded-2xl p-2 mb-8 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
-            className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-200 ${
+            className={`flex flex-col md:flex-row items-center justify-center flex-1 min-w-[80px] md:min-w-[120px] py-2 px-4 rounded-xl font-semibold transition-all duration-200 cursor-pointer ${
               activeTab === tab.id
                 ? "bg-white text-[#dc6c6f] shadow-lg"
                 : "text-white/80 hover:text-white hover:bg-white/10"
             }`}
           >
-            {tab.label}
+            <span className="text-xs md:text-sm md:py-2">{tab.label}</span>
             {tab.count !== undefined && (
               <span
-                className={`ml-2 px-2 py-1 rounded-full text-xs ${
+                className={`mt-1 md:mt-0 md:ml-2 text-[10px] md:text-xs px-2 py-0.5 rounded-full ${
                   activeTab === tab.id
                     ? "bg-[#dc6c6f] text-white"
                     : "bg-white/20"

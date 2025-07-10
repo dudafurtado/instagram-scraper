@@ -109,7 +109,7 @@ export default function CollectionPage() {
       </div>
 
       <section className="flex justify-center items-center">
-        <div className=" md:w-1/2 bg-white/15 backdrop-blur-xl rounded-3xl shadow-md p-6">
+        <div className="w-full max-w-xl bg-white/15 backdrop-blur-xl rounded-3xl shadow-md p-6">
           <div className="flex items-center space-x-3 mb-6">
             <KeyRound className="w-6 h-6 text-white" />
             <h1 className="text-2xl font-bold text-white">Instagram Login</h1>
@@ -144,7 +144,7 @@ export default function CollectionPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-white text-[#dc6c6f] py-3 px-4 rounded-xl font-medium hover:bg-white/70 focus:ring-2 focus:ring-[#E1306C] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center space-x-2 mt-6"
+              className="w-full bg-white/20 text-white py-3 px-4 rounded-xl font-medium hover:bg-white hover:text-[#dc6c6f] hover:z-30 hover:scale-102 shadow-lg transition-all duration-200 focus:ring-2 focus:ring-[#E1306C] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center space-x-2 mt-8"
             >
               <>
                 <Save size={20} />

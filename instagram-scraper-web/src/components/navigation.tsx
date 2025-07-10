@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, Users, CheckCircle, LockKeyhole } from "lucide-react";
+import { Home, Search, Users, LockKeyhole, Menu, X } from "lucide-react";
+import { useState } from "react";
 
 export default function Navigation() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
     { href: "/", icon: Home, label: "Home" },
@@ -15,9 +17,11 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="max-w-5xl mx-auto rounded-xl bg-white/15 backdrop-blur-xl sticky top-0 z-1 py-2.5 px-5 flex items-center justify-between">
+    <nav className="max-w-5xl mx-auto rounded-xl bg-white/15 backdrop-blur-xl sticky top-0 z-50 py-3 px-5 flex items-center justify-between">
       <h1 className="text-xl font-bold text-white">Instagram Tool</h1>
-      <section className="flex space-x-1">
+
+      {/* Desktop links */}
+      <section className="hidden md:flex space-x-2">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -27,16 +31,49 @@ export default function Navigation() {
               href={item.href}
               className={`flex items-center space-x-2 px-3 py-2 rounded-xl transition-colors ${
                 isActive
-                  ? "bg-blue-50 text-[#dc6c6f] border"
-                  : "text-white hover:text-[#fbad50] hover:border border:bg-gray-50/60"
+                  ? "bg-blue-50 text-[#dc6c6f]"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               }`}
             >
               <Icon size={20} />
-              <span className="hidden sm:block">{item.label}</span>
+              <span>{item.label}</span>
             </Link>
           );
         })}
       </section>
+
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="md:hidden text-white focus:outline-none py-1.5"
+      >
+        {isOpen ? <X size={28} /> : <Menu size={28} />}
+      </button>
+
+      {/* Mobile dropdown */}
+      {isOpen && (
+        <div className="absolute top-18 right-1 w-48 bg-white backdrop-blur-xl rounded-xl p-4 flex flex-col space-y-2 md:hidden z-50">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-xl transition-colors ${
+                  isActive
+                    ? "bg-[#fbad50] text-white"
+                    : "text-[#dc6c6f] hover:bg-[#fbad50]/20"
+                }`}
+              >
+                <Icon size={20} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </nav>
   );
 }
