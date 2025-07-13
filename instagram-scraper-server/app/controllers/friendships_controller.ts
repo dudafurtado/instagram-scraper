@@ -22,7 +22,7 @@ export default class FriendshipsController {
   }
 
   public async collect({ request, response }: HttpContext) {
-    const { userId } = request.qs()
+    const userId = request.qs().userId
 
     if (!userId) {
       return response.badRequest({

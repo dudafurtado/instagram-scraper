@@ -1,10 +1,10 @@
-import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright'
 import InstagramService from './instagram_service.js'
 import InstagramApi from './clients/instagram_api.js'
-import { BioLink, InfoUser } from '../interfaces/res_info_insta.js'
-import { InstagramCredentials, ScraperUser } from '../interfaces/instagram.js'
+import { InstagramCredentials } from '../interfaces/instagram.js'
+import SessionService from './session_service.js'
+import UserService from './user_service.js'
 
 export default class AutomationScraperService {
   static async login(credentials: InstagramCredentials) {
@@ -13,13 +13,21 @@ export default class AutomationScraperService {
     const page = await context.newPage()
 
     try {
-      await page.goto('https://www.instagram.com/')
+      await page.goto('https://www.instagram.com/', { waitUntil: 'domcontentloaded' })
+
       await page.getByRole('textbox', { name: 'Telefone, nome de usuário ou' }).click()
+      await page.waitForTimeout(300 + Math.random() * 400)
       await page
         .getByRole('textbox', { name: 'Telefone, nome de usuário ou' })
-        .fill(credentials.username)
-      await page.getByRole('textbox', { name: 'Senha' }).fill(credentials.password)
+        .type(credentials.username, { delay: 120 })
+
+      await page.getByRole('textbox', { name: 'Senha' }).click()
+      await page.waitForTimeout(300 + Math.random() * 400)
+      await page.getByRole('textbox', { name: 'Senha' }).type(credentials.password, { delay: 130 })
+
+      await page.waitForTimeout(1000)
       await page.getByRole('button', { name: 'Entrar', exact: true }).click()
+
       await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 30000 })
 
       const notNow = page.getByRole('button', { name: /Agora não/i })
@@ -27,50 +35,19 @@ export default class AutomationScraperService {
         await notNow.click()
       }
 
-      await this.doHumanInteractions(page)
-      await this.saveSession(context)
+      await page.waitForTimeout(3000)
+
+      await SessionService.saveSessionOfContext(context)
       await this.collectUserInfo(page, credentials.username, true)
     } finally {
       await browser.close()
     }
   }
 
-  static async doHumanInteractions(page: any) {
-    await page.waitForTimeout(3000)
-
-    const firstLikeButton = await page.getByRole('button', { name: 'Curtir' }).first()
-
-    if (await firstLikeButton.isVisible()) {
-      await firstLikeButton.click()
-      console.log('👉 Curtiu o primeiro post.')
-    } else {
-      console.log('⚠️ Botão de curtir não encontrado ou não visível.')
-    }
-
-    await page.waitForTimeout(2000)
-
-    const followButtons = page.locator('button:has-text("Seguir")')
-
-    const firstFollow = followButtons.nth(0)
-    if (await firstFollow.isVisible()) {
-      await firstFollow.click()
-      console.log('✅ Seguiu o primeiro sugerido.')
-    }
-
-    const secondFollow = followButtons.nth(1)
-    if (await secondFollow.isVisible()) {
-      await secondFollow.click()
-      console.log('✅ Seguiu o segundo sugerido.')
-    }
-
-    await page.waitForTimeout(2000)
-  }
-
   static async loadContextFromSession() {
     const browser = await chromium.launch({ headless: false, devtools: true })
     const context = await browser.newContext({
       storageState: path.join(import.meta.dirname, '../data/json/session.json'),
-      viewport: { width: 1280, height: 720 },
     })
     const page = await context.newPage()
 
@@ -119,9 +96,7 @@ export default class AutomationScraperService {
     const targetUserId = await targetUserIdPromise
     const info = await InstagramApi.getUserInfo(targetUserId)
 
-    console.log(info)
-
-    const user = await this.saveUserInfo(targetUserId, posts, info.user, isLogged)
+    const user = await UserService.saveUserInfo(targetUserId, posts, info.user, isLogged)
     await InstagramService.downloadImage({
       id: targetUserId,
       username,
@@ -131,60 +106,105 @@ export default class AutomationScraperService {
     console.log(`✔️ ${username} salvo!`)
   }
 
-  static async saveUserInfo(userId: string, posts: string, user: InfoUser, isLogged: boolean) {
-    const data = {
-      user_id: userId,
+  static async doHumanInteractions(page: any) {
+    await page.goto('https://www.instagram.com/', { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(3000)
 
-      username: user.username,
-      full_name: user.full_name,
-      biography: user.biography.split('\n'),
-      urls: user.bio_links.map((link: BioLink) => link.url),
-      profile_pic_url: user.hd_profile_pic_versions[0].url,
-
-      posts: posts.split(' ')[0].replace('.', ''),
-      follower_count: user.follower_count,
-      following_count: user.following_count,
-
-      is_private: user.is_private,
-      is_bestie: user.is_bestie,
-      is_verified: user.is_verified,
-
-      address_street: user.address_street,
-      city_name: user.city_name,
-      contact_phone_number: user.contact_phone_number,
-      public_email: user.public_email,
-      public_phone_number: user.public_phone_number,
-
-      status: 'to_collect',
-      is_logged: isLogged,
-
-      created_at: new Date().toISOString(),
-    }
-
-    const dir = path.join(import.meta.dirname, '../data/json')
-    const filePath = path.join(dir, 'users.json')
-    let db: ScraperUser[] = []
-
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true })
-    }
-
-    if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, 'utf-8')
-      db = JSON.parse(fileContent)
-    }
-
-    db.push(data)
-
-    fs.writeFileSync(filePath, JSON.stringify(db, null, 2), 'utf-8')
-
-    return data
+    await this.likeFirstFeedPosts(page)
+    await this.searchAndVisitRandomUser(page)
+    await this.likeRandomPhotoFromProfile(page)
   }
 
-  static async saveSession(context: any) {
-    const dir = path.join(import.meta.dirname, '../data/json')
-    const sessionPath = path.join(dir, 'session.json')
+  private static async likeFirstFeedPosts(page: any) {
+    const likeButtons = await page.getByRole('button', { name: 'Curtir' })
 
-    await context.storageState({ path: sessionPath })
+    for (let i = 0; i < 2; i++) {
+      const button = likeButtons.nth(i)
+      if (await button.isVisible()) {
+        await button.click()
+        await button.click()
+        console.log(`👉 Curtiu o post #${i + 1}`)
+        await page.mouse.wheel(0, 500)
+        await page.waitForTimeout(1000)
+      } else {
+        console.log(`⚠️ Botão de curtir #${i + 1} não visível.`)
+      }
+    }
+
+    await page.waitForTimeout(2000)
+  }
+
+  private static async searchAndVisitRandomUser(page: any) {
+    const usernames = [
+      'giuligartner',
+      'girl_loves_coding',
+      'sooyaaa__',
+      'danaigurira',
+      'laurencohan',
+    ]
+
+    const username = usernames[Math.floor(Math.random() * usernames.length)]
+
+    const openSearch = page.locator('span', { hasText: 'Pesquisa' }).first()
+    await openSearch.click()
+    await page.waitForTimeout(800)
+
+    const searchInput = page.locator('input[type="text"]')
+    await searchInput.waitFor({ timeout: 5000 })
+    await searchInput.click()
+    await page.waitForTimeout(300)
+
+    for (const char of username) {
+      await searchInput.type(char, { delay: 150 + Math.random() * 100 })
+    }
+
+    await page.waitForTimeout(1200)
+
+    const userLink = page.locator(`a[href="/${username}/"]`).first()
+
+    try {
+      await userLink.waitFor({ state: 'visible', timeout: 5000 })
+      await userLink.scrollIntoViewIfNeeded()
+      await page.waitForTimeout(500)
+      await userLink.click({ trial: true })
+      await userLink.click()
+      console.log(`➡️ Abriu perfil: ${username}`)
+    } catch (e) {
+      console.error(`❌ Erro ao clicar no perfil ${username}:`, e)
+      await page.screenshot({ path: `erro_click_perfil_${username}.png` })
+    }
+
+    await page.waitForTimeout(5000)
+  }
+
+  private static async likeRandomPhotoFromProfile(page: any) {
+    await page.waitForSelector('div._aagw', { timeout: 10000 })
+    const posts = await page.locator('div._aagw').elementHandles()
+
+    if (posts.length === 0) {
+      console.log('⚠️ Nenhum post encontrado.')
+      return
+    }
+
+    const post = posts[Math.floor(Math.random() * posts.length)]
+    await post.click()
+    console.log('🖼️ Abriu um post aleatório.')
+
+    await page.waitForTimeout(2000)
+
+    const likeButton = page.locator('svg[aria-label="Curtir"], svg[aria-label="Like"]').first()
+    if (await likeButton.isVisible()) {
+      await likeButton.click()
+      await likeButton.click()
+      console.log('❤️ Curtiu o post do perfil.')
+    } else {
+      console.log('⚠️ Botão de curtir não visível no modal.')
+    }
+
+    const closeButton = page.locator('svg[aria-label="Fechar"], svg[aria-label="Close"]').first()
+    if (await closeButton.isVisible()) {
+      await closeButton.click()
+      await page.waitForTimeout(1000)
+    }
   }
 }
