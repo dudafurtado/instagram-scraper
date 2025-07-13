@@ -4,8 +4,8 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import type { Credentials, CollectionData, ScraperUser } from "@/types";
 
 interface AppContextType {
-  credentials: Credentials | null;
-  setCredentials: (credentials: Credentials | null) => void;
+  credentials: boolean;
+  setCredentials: (data: boolean) => void;
   collectionData: CollectionData;
   setCollectionData: (data: CollectionData) => void;
   isLoading: boolean;
@@ -17,7 +17,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [credentials, setCredentials] = useState<Credentials | null>(null);
+  const [credentials, setCredentials] = useState<boolean>(false);
   const [collectionData, setCollectionData] = useState<CollectionData>({
     followers: [],
     following: [],

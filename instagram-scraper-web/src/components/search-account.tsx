@@ -83,48 +83,61 @@ export default function AccountInfoModal({ onClose }: Props) {
             &times;
           </button>
         </div>
+        {credentials ? (
+          <>
+            <form onSubmit={handleSubmitInfo} className="space-y-4">
+              <label className="block text-sm font-medium text-white mb-2">
+                Instagram Username One per Line
+              </label>
+              <textarea
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={`username1\nusername2\nusername3\nusername4`}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#fccc63] focus:border-transparent resize-none text-white bg-white/10"
+                required
+              />
 
-        <form onSubmit={handleSubmitInfo} className="space-y-4">
-          <label className="block text-sm font-medium text-white mb-2">
-            Instagram Username One per Line
-          </label>
-          <textarea
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={`username1\nusername2\nusername3\nusername4`}
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#fccc63] focus:border-transparent resize-none text-white bg-white/10"
-            required
-          />
+              {isLoading && (
+                <div className="space-y-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-[#dc6c6f] h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-sm text-white text-center">
+                    Collecting data... {progress}%
+                  </p>
+                </div>
+              )}
 
-          {isLoading && (
-            <div className="space-y-2">
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-[#dc6c6f] h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-              <p className="text-sm text-white text-center">
-                Collecting data... {progress}%
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full gap-2 bg-white/20 text-white py-3 px-4 rounded-xl font-medium hover:bg-white hover:text-[#dc6c6f] hover:z-30 hover:scale-102 transition-all duration-200 focus:ring-2 focus:ring-[#E1306C] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center space-x-2"
+              >
+                {isLoading ? (
+                  <LoadingSpinner size="sm" />
+                ) : (
+                  <>
+                    <IdCard size={20} /> Get Info
+                  </>
+                )}
+              </button>
+            </form>{" "}
+          </>
+        ) : (
+          <section className="max-w-2xl mx-auto px-4 py-8">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 text-center">
+              <p className="text-yellow-800 font-medium">⚠️ No Credencials</p>
+              <p className="text-yellow-600 mt-2">
+                Sign in with your credentials or imported cookies on the
+                authentication page.
               </p>
             </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full gap-2 bg-white/20 text-white py-3 px-4 rounded-xl font-medium hover:bg-white hover:text-[#dc6c6f] hover:z-30 hover:scale-102 transition-all duration-200 focus:ring-2 focus:ring-[#E1306C] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center space-x-2"
-          >
-            {isLoading ? (
-              <LoadingSpinner size="sm" />
-            ) : (
-              <>
-                <IdCard size={20} /> Get Info
-              </>
-            )}
-          </button>
-        </form>
+          </section>
+        )}
       </div>
     </div>
   );

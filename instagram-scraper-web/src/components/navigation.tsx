@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, Users, LockKeyhole, Menu, X } from "lucide-react";
+import { Home, Search, Users, Menu, X, LockKeyholeOpen } from "lucide-react";
 import { useState } from "react";
 
 export default function Navigation() {
@@ -11,7 +11,7 @@ export default function Navigation() {
 
   const navItems = [
     { href: "/", icon: Home, label: "Home" },
-    { href: "/auth", icon: LockKeyhole, label: "Auth" },
+    { href: "/auth", icon: LockKeyholeOpen, label: "Auth" },
     { href: "/collect", icon: Search, label: "Collect" },
     { href: "/connections", icon: Users, label: "Connections" },
   ];

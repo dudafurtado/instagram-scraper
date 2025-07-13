@@ -1,6 +1,8 @@
 export interface Credentials {
-  username: string;
-  password: string;
+  method: "credentials" | "cookies";
+  username?: string;
+  password?: string;
+  cookies?: string;
 }
 
 export interface User {

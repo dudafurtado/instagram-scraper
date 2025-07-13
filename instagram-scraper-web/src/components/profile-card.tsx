@@ -115,7 +115,7 @@ export default function ProfileCard({
           disabled={disabled || profile.is_private}
           className="w-full flex items-center justify-center gap-2 bg-[#bc2a8d]/70 hover:z-30 hover:scale-105 text-white py-3 px-4 rounded-2xl font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          <Download size={20} />
+          {profile.is_private ? <Lock size={20} /> : <Download size={20} />}
           {profile.is_private ? "Private Account" : actionLabel}
         </button>
       )}
