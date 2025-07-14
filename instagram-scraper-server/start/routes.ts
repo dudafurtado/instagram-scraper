@@ -18,7 +18,6 @@ router.delete('/instagram/logout', [AuthController, 'destroy'])
 router.get('/instagram/interaction', [InteractionsController, 'interaction'])
 
 router.get('/instagram/accounts', [AccountsController, 'index'])
-router.get('/instagram/account', [AccountsController, 'show'])
 router.post('/instagram/accounts', [AccountsController, 'store'])
 
 router.get('/instagram/collect', [FriendshipsController, 'collect'])

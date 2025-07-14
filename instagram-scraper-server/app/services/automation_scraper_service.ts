@@ -1,19 +1,47 @@
 import path from 'node:path'
-import { chromium } from 'playwright'
+import { chromium } from 'playwright-extra'
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 import InstagramService from './instagram_service.js'
 import InstagramApi from './clients/instagram_api.js'
 import { InstagramCredentials } from '../interfaces/instagram.js'
 import SessionService from './session_service.js'
 import UserService from './user_service.js'
+import { randomUA } from '../helpers/user_agent.js'
+
+chromium.use(StealthPlugin())
 
 export default class AutomationScraperService {
   static async login(credentials: InstagramCredentials) {
-    const browser = await chromium.launch({ headless: false })
-    const context = await browser.newContext()
-    const page = await context.newPage()
+    let browser
 
     try {
-      await page.goto('https://www.instagram.com/', { waitUntil: 'domcontentloaded' })
+      browser = await chromium.launch({ headless: false })
+
+      const context = await browser.newContext({
+        locale: 'pt-BR',
+        geolocation: { latitude: -23.5505, longitude: -46.6333 },
+        permissions: ['geolocation', 'notifications'],
+        userAgent: randomUA,
+      })
+
+      const page = await context.newPage()
+
+      const spoofPlatform = (ua: string): string => {
+        if (ua.includes('Windows')) return 'Win32'
+        if (ua.includes('Macintosh')) return 'MacIntel'
+        if (ua.includes('Linux')) return 'Linux x86_64'
+        return 'Unknown'
+      }
+
+      const platform = spoofPlatform(randomUA)
+
+      await context.addInitScript(`
+        Object.defineProperty(navigator, 'platform', { get: () => '${platform}' });
+      `)
+
+      await page.goto('https://www.instagram.com/accounts/login/', {
+        waitUntil: 'domcontentloaded',
+      })
 
       await page.getByRole('textbox', { name: 'Telefone, nome de usuário ou' }).click()
       await page.waitForTimeout(300 + Math.random() * 400)
@@ -40,7 +68,9 @@ export default class AutomationScraperService {
       await SessionService.saveSessionOfContext(context)
       await this.collectUserInfo(page, credentials.username, true)
     } finally {
-      await browser.close()
+      if (browser) {
+        await browser.close()
+      }
     }
   }
 
@@ -55,19 +85,29 @@ export default class AutomationScraperService {
   }
 
   static async collectInfo(usernames: string[]) {
-    const browser = await chromium.launch({ headless: false })
-    const context = await browser.newContext({
-      storageState: path.join(import.meta.dirname, '../data/json/session.json'),
-    })
-    const page = await context.newPage()
+    let browser
 
     try {
+      browser = await chromium.launch({ headless: false })
+      const context = await browser.newContext({
+        storageState: path.join(import.meta.dirname, '../data/json/session.json'),
+      })
+      const page = await context.newPage()
+
+      await page.mouse.move(100 + Math.random() * 50, 100 + Math.random() * 50, { steps: 10 })
+      await page.waitForTimeout(1000 + Math.random() * 500)
+      await page.mouse.wheel(0, 300 + Math.random() * 100)
+
+      await page.waitForTimeout(3000)
       for (const username of usernames) {
+        await page.waitForTimeout(3000)
         await this.collectUserInfo(page, username, false)
         await new Promise((res) => setTimeout(res, 5000))
       }
     } finally {
-      await browser.close()
+      if (browser) {
+        await browser.close()
+      }
     }
   }
 
@@ -87,14 +127,21 @@ export default class AutomationScraperService {
     })
 
     await page.goto(`https://www.instagram.com/${username}/`)
+    await page.waitForTimeout(3000)
+
+    await page.mouse.move(100 + Math.random() * 50, 100 + Math.random() * 50, { steps: 10 })
+    await page.waitForTimeout(1000 + Math.random() * 500)
+    await page.mouse.wheel(0, 300 + Math.random() * 100)
 
     const posts = await page.getByText(/publicações/).innerText()
 
     await page.getByText(/seguidores/i).click()
-    await page.waitForTimeout(4000)
+    await page.waitForTimeout(5000)
 
     const targetUserId = await targetUserIdPromise
     const info = await InstagramApi.getUserInfo(targetUserId)
+
+    await page.waitForTimeout(3000)
 
     const user = await UserService.saveUserInfo(targetUserId, posts, info.user, isLogged)
     await InstagramService.downloadImage({

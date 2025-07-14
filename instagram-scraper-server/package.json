@@ -64,7 +64,9 @@
     "bullmq": "^5.56.0",
     "luxon": "^3.6.1",
     "mysql2": "^3.14.1",
-    "playwright": "^1.53.2",
+    "playwright": "^1.54.1",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "reflect-metadata": "^0.2.2"
   },
   "hotHook": {

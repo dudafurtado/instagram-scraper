@@ -3,7 +3,6 @@ import path from 'node:path'
 import type { HttpContext } from '@adonisjs/core/http'
 import { InstagramQueue } from '../queues/instagram_queue.js'
 import AutomationScraperService from '#services/automation_scraper_service'
-import { readUsers } from '../helpers/users_file.js'
 
 export default class AccountsController {
   async store({ request, response }: HttpContext) {
@@ -44,22 +43,6 @@ export default class AccountsController {
       collecting,
       collected,
     })
-  }
-
-  async show({ response }: HttpContext) {
-    try {
-      const users = readUsers()
-      const user = users.find((u: any) => u.isLogged === true)
-
-      if (!user) {
-        return response.badRequest({ message: `No user found logged` })
-      }
-
-      return response.ok(user)
-    } catch (err) {
-      console.error(err)
-      return response.status(500).json({ message: err.message })
-    }
   }
 
   public async listFailedJobs({ response }: HttpContext) {

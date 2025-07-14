@@ -17,7 +17,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"rasp_insta_code\",\n    \"password\": \"rasp_insta_code321876\",\n    \"search\": [\"_dudafurtado_\", \"ffernanda.cs\"]\n}",
+							"raw": "{\n    \"username\": \"rasp_insta_code\",\n    \"password\": \"rasp_insta_code321876\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -38,6 +38,73 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Session",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/instagram/session",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"instagram",
+								"session"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Interaction",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"rasp_insta_code\",\n    \"password\": \"rasp_insta_code321876\",\n    \"search\": \"_dudafurtado_\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3333/instagram/interaction",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"instagram",
+								"interaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/instagram/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"instagram",
+								"logout"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -45,7 +112,7 @@
 			"name": "Accounts",
 			"item": [
 				{
-					"name": "Listar",
+					"name": "Listar Collection",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -70,11 +137,31 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Info Collect",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3333/instagram/accounts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"instagram",
+								"accounts"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "Relationship",
+			"name": "Friendship",
 			"item": [
 				{
 					"name": "Collect",
