@@ -71,9 +71,7 @@ export default function CollectionPage() {
 
       setCredentials(data);
 
-      setTimeout(() => {
-        router.push("/collect");
-      }, 5000);
+      toast.success("Login successfully. You can interact or go to collect.");
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Unexpected error. Please try again."
@@ -102,8 +100,6 @@ export default function CollectionPage() {
   const handleLogout = async () => {
     try {
       const res = await api.delete("/logout");
-
-      console.log(res);
 
       if (res.data.status === "Error") {
         return toast.error(res.data.message);
